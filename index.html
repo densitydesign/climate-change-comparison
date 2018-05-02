@@ -7,38 +7,134 @@
 	<meta name="description" content="The HTML5 Herald">
 	<meta name="author" content="SitePoint">
 	<link rel="stylesheet" href="style.css">
-	<!--[if lt IE 9]>
+
+	<!--	import font-->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+	<!--[if lt IE 9]>-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
-	<![endif]-->
+	<!--	<![endif]-->
 </head>
 
 <body>
+
+	<!--
+ sfondo da mettere sotto a tutto
+<img src="./assets/sfondo.jpg" height="100%">
+-->
+
+
 	<script src="js/sketch.js"></script>
 	<div id="container">
-		<!-- Left panel with buttons -->
+		<!--		 Left panel with buttons -->
 		<div id="left-panel">
-			<div class="left-toggle" id="toggle-1">
-				&nbsp;
+			<div class="intro">
+				SELEZIONA I LIVELLI:
 			</div>
-			<div class="left-toggle" id="toggle-2">
-				&nbsp;
+
+			<div class="riq">
+				<div class="title scrittaMagenta">
+					Giorni di sole
+				</div>
+				<div class="subtitle">
+					in più rispetto ad oggi
+				</div>
+				<div class="left-toggle" id="toggle-1">
+					&nbsp;
+				</div>
+				<div class="legenda">
+					<div class="subtitle">
+						0
+					</div>
+					<img src="./assets/legenda1.jpg" height="16">
+					<div class="subtitle">
+						+100
+					</div>
+				</div>
 			</div>
-			<div class="left-toggle" id="toggle-3">
-				&nbsp;
+
+			<div class="riq">
+				<div class="title scrittaYellow">
+					Millimetri di pioggia
+				</div>
+				<div class="subtitle">
+					in più rispetto ad oggi
+				</div>
+				<div class="left-toggle" id="toggle-2">
+					&nbsp;
+				</div>
+				<div class="legenda">
+					<div class="subtitle">
+						0
+					</div>
+					<img src="./assets/legenda2.jpg" height="16">
+					<div class="subtitle">
+						+100
+					</div>
+				</div>
+			</div>
+
+			<div class="riq">
+				<div class="title scrittaCyan">
+					Eventi estremi
+				</div>
+				<div class="subtitle">
+					in più rispetto ad oggi
+				</div>
+				<div class="left-toggle" id="toggle-3">
+					&nbsp;
+				</div>
+				<div class="legenda">
+					<div class="subtitle">
+						0
+					</div>
+					<img src="./assets/legenda3.jpg" height="16">
+					<div class="subtitle">
+						+100
+					</div>
+				</div>
 			</div>
 		</div>
-		<!-- Central visualization -->
+		<!--		 Central visualization -->
 		<div id="visualization">
 			<div id="map">
-				&nbsp;
+				<img src="./assets/italia-base.jpg" height="960">
 			</div>
 			<div id="timeline">
-				&nbsp;
+				<div class="intro">
+					SELEZIONA IL TEMPO:
+				</div>
+				<div class="line">
+					<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 686.91 52.86">
+  <rect class="cls-1" x="219.9" y="1.26" width="220.96" height="31.13" rx="15.56" ry="15.56"/>
+  <text class="cls-2" transform="translate(8.99 48.57)">2020</text>
+  <text class="cls-3" transform="translate(160.87 48.57)">2040</text>
+  <text class="cls-4" transform="translate(399.88 48.57)">2070</text>
+  <text class="cls-5" transform="translate(247.99 48.57)">2050</text>
+  <text class="cls-5" transform="translate(323.94 48.57)">2060</text>
+  <text class="cls-2" transform="translate(84.93 48.57)">2030</text>
+  <text class="cls-2" transform="translate(487 48.57)">2080</text>
+  <text class="cls-2" transform="translate(562.94 48.57)">2090</text>
+  <text class="cls-3" transform="translate(638.89 48.57)">2100</text>
+  <line class="cls-6" x1="5" y1="17" x2="681.91" y2="17"/>
+  <circle class="cls-7" cx="177.08" cy="17" r="8.55"/>
+  <circle class="cls-7" cx="658.46" cy="17" r="8.55"/>
+  <circle class="cls-8" cx="416.89" cy="17" r="8.55"/>
+  <rect class="cls-9" x="220.26" y="1" width="220.96" height="31.13" rx="15.56" ry="15.56"/>
+</svg>
+
+
+				</div>
 			</div>
 		</div>
-		<!-- Right visualization -->
+		<!--		 Right visualization -->
 		<div id="right-panel">
-			&nbsp;
+			<div class="biancoDestra">
+				<div class="testo"> 
+<!--					<br>-->
+					La mappa mostra la previsione di uno scenario futuro nel campo del cambiamento climatico. Ogni livello rappresenta una differente componente atmosferica: i giorni di sole, in rosso; la percentuale di eventi estremi  in giallo e la quantità di pioggia in azzurro. La densità dei puntini mostra la quantità, per ogni componente,  a cui sarà soggetta l’Italia nel prossimi 30, 60 e 90 anni. Le mappe sono sovrapponibili per permettere una  visione completa della situazione climatica a cui sarà soggetto  il nostro Paese nel futuro. Cosa succederebbe se venisse attuato l’ adattamento climatico? Toccando lo schermo è possibile esplorare la situazione che mostra la differenza con uno scenario attenuato dall’adattamento climatico.
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
