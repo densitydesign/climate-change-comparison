@@ -13,8 +13,8 @@ function preload() {
 
 function setup() {
 	//Create the canvas
-	myCanvas = createCanvas(1320, 1080);
-	myCanvas.parent('map');
+	myCanvas = createCanvas(960, 960);
+	myCanvas.parent('mapZero');
 
 	//initialize buttons
 	initializeButton('#toggle-1', show_TX30);
@@ -34,17 +34,22 @@ function initializeButton(_btn_selector, _target_variable) {
 }
 
 function changeBg(event) {
-	background(random(255));
+	background("blue");
 	console.log(event);
 
 	//var element = new p5.Element(event.target);
 	var element = event.target.self;
 	if (element.selected) {
-		element.removeClass('toggle-1');
+		element.removeClass("toggle-1");
 	} else {
-		element.addClass('toggle-1Selected');
+		element.addClass("toggle-1Clicked");
 	}
+	
 	element.selected = !element.selected;
 
-	element.style('background-color', 'blue')
+	element.style('background-color', 'red')
 }
+
+
+
+

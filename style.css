@@ -76,16 +76,18 @@ body {
 	margin-top: 15px;
 	height: 210px;
 	width: 210px;
-	background-image: url("./assets/bottone1.jpg");
+/*	background-image: url("./assets/bottone1.jpg");*/
 	background-size: 100%;
+	background-color: magenta;
 }
 
 #toggle-1Clicked {
 	outline-color: #ff0086;
 	outline-width:8px;
 	margin-top: 15px;
-	background-image: url("./assets/bottone1clicked.jpg");
+/*	background-image: url("./assets/bottone1clicked.jpg");*/
 	background-size: 100%;
+	background-color: green;
 }
 
 /*
@@ -99,8 +101,9 @@ img{
 	outline-color: #d8d8d8;
 	outline-width:2px;
 	margin-top: 15px;
-	background-image: url("./assets/bottone2.jpg");
+/*	background-image: url("./assets/bottone2.jpg");*/
 	background-size: 100%;
+	background-color: yellow;
 }
 
 #toggle-2Clicked {
@@ -115,8 +118,9 @@ img{
 /*	outline-color: cyan;*/
 	outline-color: #d8d8d8;
 	margin-top: 15px;
-	background-image: url("./assets/bottone3.jpg");
+/*	background-image: url("./assets/bottone3.jpg");*/
 	background-size: 100%;
+	background-color: cyan;
 }
 
 #toggle-3Clicked {
