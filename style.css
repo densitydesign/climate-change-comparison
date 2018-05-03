@@ -266,6 +266,7 @@ img{
 /*	background: yellow;*/
 }
 
+/*
 .rightRiq {
 	outline: 2px solid #d8d8d8;
 	margin-top: 15px;
@@ -274,27 +275,36 @@ img{
 
 
 }
+*/
 
 .biancoDestra {
 	width: 350px;
 	height: 880px;
     outline: 2px solid #d8d8d8;
 	background: white;
-	margin-top: 100px;
-	
+	margin-top: 100px;	
 }
 
 .testo {
 	width: 290px;
-	height: 820px;
-	font-family: Work Sans;
-	font-size: 18px;
-	line-height: 35px;
-	margin-left: 30px;
-	margin-top:20px;
-/*	background: blue;*/
-	padding-top:30px;
 	
+	font-family: Work Sans;
+	font-size: 15px;
+	line-height: 30px;
+	margin-left: 30px;
+	padding-top: 12px;
+/*	text-align: justify;*/
+
+}
+
+.testo2 {
+	width: 290px;
+	font-family: Work Sans;
+	font-size: 13px;
+	line-height: 25px;
+	margin-left: 30px;
+
+/*	text-align: justify;*/
 
 }
 
