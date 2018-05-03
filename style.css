@@ -17,20 +17,20 @@ body {
 	height: 100%;
 	width: 380px;
 	float: left;
-	/*	margin-left:0px;*/
+    margin-top:35px;
+	margin-left:35px;
 }
 
 .intro {
 	height: 30px;
 	font-family: Open Sans;
-	margin-left: 30px;
-	margin-top: 40px;
+	width: 300px;
 }
 
 .title {
-	height: 45px;
 	font-family: Open Sans;
-	font-size: 34px;
+	font-size: 30px;
+	margin-top: 5px;
 }
 
 .scrittaMagenta {
@@ -50,7 +50,7 @@ body {
 .subtitle {
 	font-family: Open Sans;
 	color: black;
-	font-size: 15px;
+	font-size: 12px;
 }
 
 
@@ -60,21 +60,14 @@ body {
 	width: 210px;
 	margin-left: 50px;
 
-
-	
-	
-
 }
 
 .riq {
 /*	outline: 1px solid;*/
 	height: 320px;
 	width: 320px;
-	margin-left: 30px;
-	margin-top: 15px;
-
+	margin-top:10px;
 }
-
 
 #toggle-1 {
 /*	outline-color: #ff0086;*/
@@ -84,8 +77,14 @@ body {
 	width: 210px;
 	background-image: url("./assets/bottone1.jpg");
 	background-size: 100%;
-	
+}
 
+#toggle-1Clicked {
+	outline-color: #ff0086;
+	outline-width:8px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone1clicked.jpg");
+	background-size: 100%;
 }
 
 /*
@@ -96,10 +95,18 @@ img{
 */
 
 #toggle-2 {
-/*	outline-color: yellow;*/
 	outline-color: #d8d8d8;
+	outline-width:2px;
 	margin-top: 15px;
 	background-image: url("./assets/bottone2.jpg");
+	background-size: 100%;
+}
+
+#toggle-2Clicked {
+	outline-color: yellow;
+	outline-width:8px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone2clicked.jpg");
 	background-size: 100%;
 }
 
@@ -108,6 +115,14 @@ img{
 	outline-color: #d8d8d8;
 	margin-top: 15px;
 	background-image: url("./assets/bottone3.jpg");
+	background-size: 100%;
+}
+
+#toggle-3Clicked {
+	outline-color: cyan;
+	outline-width:8px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone3clicked.jpg");
 	background-size: 100%;
 }
 
@@ -138,85 +153,116 @@ img{
 
 
 #visualization {
-	width: 1120px;
+	width: 960px;
 	height: 100%;
 /*	outline: 1px dashed #000;*/
 	outline-offset: -1px;
+	margin-left: 40px;
 	float: left;
+/*	background: blue;*/
 }
 
 
 
-#map {
-	height: 930px;
+#mapZero {
+	height: 960px;
+	width: 960px;
 /*	background-color: darkgray;*/
-	margin-left: 140px;
-	margin-top:20px;
+	margin-top:15px;
+	background-image: url("./assets/contorni.png");
+	background-size: 100%;
+/*	background-color: red;*/
+}
+
+#mappa1 {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/mappa1.png");
+	background-size: 100%;
+}
+
+#mappa2 {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/mappa2.png");
+	background-size: 100%;
+}
+
+#mappa3 {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/mappa3.png");
+	background-size: 100%;
 }
 
 
 
 #timeline {
 	height: 90px;
-	margin-left:100px;
-/*	background-color: lightcyan;*/
+	margin-left:200px;
+
 }
 
 .line {
 	height: 50px;
 	width: 850px;
-	margin-left:30px;
-/*	background-color: papayawhip;*/
-
 }
 
 /*linea del tempo*/
+   
       .cls-1 {
         fill: #fff;
       }
 
-      .cls-2, .cls-5 {
-        font-size: 11.23px;
-        font-family: PTSans-Regular, PT Sans;
-      }
-
-      .cls-2, .cls-3, .cls-7 {
-        fill: #d8d8d8;
-      }
-
-      .cls-3, .cls-4 {
-        font-size: 15.72px;
-        font-family: PTSans-Bold, PT Sans;
-        font-weight: 700;
-      }
-
-      .cls-4, .cls-5, .cls-8 {
-        fill: #454545;
-      }
-
-      .cls-6, .cls-9 {
+      .cls-2, .cls-7 {
         fill: none;
         stroke-miterlimit: 10;
       }
 
-      .cls-6 {
+      .cls-2 {
         stroke: #d8d8d8;
         stroke-linecap: round;
-        stroke-width: 7px;
+        stroke-width: 4px;
       }
 
-      .cls-9 {
+      .cls-3, .cls-5, .cls-6 {
+        fill: #454545;
+      }
+
+      .cls-4 {
+        font-size: 5.16px;
+        fill: #d8d8d8;
+      }
+
+      .cls-4, .cls-5 {
+        font-family: PTSans-Regular, PT Sans;
+      }
+
+      .cls-5 {
+        font-size: 6.89px;
+      }
+
+      .cls-6 {
+        opacity: 0.2;
+      }
+
+      .cls-7 {
         stroke: #454545;
-        stroke-width: 1px;
       }
 
+    
+     
 
 #right-panel {
-	width: 420px;
 	height: 100%;
 /*	outline: 1px dashed #000;*/
 	outline-offset: -1px;
 	float: right;
+	margin-right: 70px;
+/*	background: yellow;*/
 }
 
 .biancoDestra {
@@ -230,7 +276,7 @@ img{
 
 .testo {
 	width: 290px;
-	height: 920px;
+	height: 820px;
 	font-family: Open Sans;
 	font-size: 18px;
 	line-height: 35px;
