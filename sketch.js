@@ -40,9 +40,9 @@ function changeBg(event) {
 	//var element = new p5.Element(event.target);
 	var element = event.target.self;
 	if (element.selected) {
-		element.removeClass('selected');
+		element.removeClass('toggle-1');
 	} else {
-		element.addClass('selected');
+		element.addClass('toggle-1Selected');
 	}
 	element.selected = !element.selected;
 
