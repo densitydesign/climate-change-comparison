@@ -1,4 +1,4 @@
-html, body {
+html, body, canvas {
   margin: 0;
   padding: 0;
 }
@@ -31,6 +31,11 @@ html, body {
 
 #toggle-3 {
 	outline-color: yellow;
+}
+
+.selected {
+	outline: 10px dashed #000;
+	outline-offset: -10px;
 }
 
 #visualization {
