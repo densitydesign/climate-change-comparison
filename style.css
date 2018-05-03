@@ -23,12 +23,12 @@ body {
 
 .intro {
 	height: 30px;
-	font-family: Open Sans;
+	font-family: Work Sans;
 	width: 300px;
 }
 
 .title {
-	font-family: Open Sans;
+	font-family: Work Sans;
 	font-size: 30px;
 	margin-top: 5px;
 }
@@ -48,7 +48,7 @@ body {
 }
 
 .subtitle {
-	font-family: Open Sans;
+	font-family: Work Sans;
 	color: black;
 	font-size: 12px;
 }
@@ -59,6 +59,7 @@ body {
 	height: 210px;
 	width: 210px;
 	margin-left: 50px;
+	margin-top: 15px
 
 }
 
@@ -238,7 +239,7 @@ img{
       }
 
       .cls-4, .cls-5 {
-        font-family: PTSans-Regular, PT Sans;
+        font-family: Work Sans;
       }
 
       .cls-5 {
@@ -265,6 +266,15 @@ img{
 /*	background: yellow;*/
 }
 
+.rightRiq {
+	outline: 2px solid #d8d8d8;
+	margin-top: 15px;
+	height: 210px;
+	width: 310px;
+
+
+}
+
 .biancoDestra {
 	width: 350px;
 	height: 880px;
@@ -277,7 +287,7 @@ img{
 .testo {
 	width: 290px;
 	height: 820px;
-	font-family: Open Sans;
+	font-family: Work Sans;
 	font-size: 18px;
 	line-height: 35px;
 	margin-left: 30px;
