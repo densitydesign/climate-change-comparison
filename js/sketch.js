@@ -40,14 +40,14 @@ function changeBg(event) {
 	//var element = new p5.Element(event.target);
 	var element = event.target.self;
 	if (element.selected) {
-		element.removeClass("toggle-1");
+		element.removeClass("clicked");
 	} else {
-		element.addClass("toggle-1Clicked");
+		element.addClass("clicked");
 	}
 	
 	element.selected = !element.selected;
 
-	element.style('background-color', 'red')
+	element.style('background', 'red')
 }
 
 
