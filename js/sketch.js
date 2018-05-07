@@ -61,8 +61,8 @@ function setup() {
 
 	//initialize buttons
 	initializeButton('#toggle-1', 'show_TX30');
-	initializeButton('#toggle-2', 'show_PRCPTOT');
-	initializeButton('#toggle-3', 'show_PR95PERC');
+	initializeButton('#toggle-2', 'show_PR95PERC');
+	initializeButton('#toggle-3', 'show_PRCPTOT');
 
 	//initialize map
 	l1 = new GeoLayer(fullData.values, 74, myMap, w, h);
