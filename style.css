@@ -155,20 +155,6 @@ img{
 	justify-content: center;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #visualization {
 	width: 960px;
 	height: 100%;
@@ -178,8 +164,6 @@ img{
 	float: left;
 /*	background: blue;*/
 }
-
-
 
 #mapZero {
 	height: 960px;
@@ -335,6 +319,10 @@ img{
 
 }
 
+.timeline_button {
+	opacity: 0.2;
+}
 
-
-
+.timeline_button.selected {
+	opacity: 1;
+}

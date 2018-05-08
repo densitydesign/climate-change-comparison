@@ -5,7 +5,8 @@ var myCanvas;
 const status = {
 	show_TX30: false,
 	show_PRCPTOT: false,
-	show_PR95PERC: false
+	show_PR95PERC: false,
+	years: '2011-2040'
 };
 
 // API Key for MapboxGL.
@@ -29,6 +30,8 @@ let mapImg;
 
 // datasets
 let fullData, province;
+//images
+let italy_bg;
 
 //size
 let w, h;
@@ -41,18 +44,25 @@ let l1, l2, l3,
 	prov_layer
 
 //lens variables
-var lens_size = 300;
+let lens_size = 300;
+
+//timeline buttons
+let timeline_btns = [];
 
 //load datasets
 function preload() {
 	fullData = loadJSON('assets/climatechange_data.json');
 	province = loadJSON('assets/contorniProvince.json');
+	italy_bg = loadImage('assets/italy_bg.png')
 }
 
 function setup() {
 	//Create the canvas
-	w = 1320;
-	h = 1080;
+	var parentDiv = select('#map');
+	console.log(parentDiv);
+
+	w = 960;
+	h = 960;
 
 	canvas = createCanvas(w, h);
 	pixelDensity(1);
@@ -73,8 +83,33 @@ function setup() {
 	l3_45 = new GeoLayer(fullData.values, 88, myMap, w, h);
 	prov_layer = new ShapeFileLayer(province, myMap, w, h);
 
-	initMap('2071-2100');
+	initMap(status.years);
+	
 }
+
+//initialize d3 buttons
+d3.selectAll('.timeline_button')
+	.on('click', function(){
+		var activeClass = "selected";
+		
+		d3.selectAll(".timeline_button")
+			.classed(activeClass, false);
+		d3.select(this).classed(activeClass, true)
+		if(this.id == 'timeline_2011_2040') {
+			status.years = '2011-2040';
+			initMap(status.years);
+		}
+		if(this.id == 'timeline_2041_2070') {
+			status.years = '2041-2070';
+			initMap(status.years);
+		}
+		if(this.id == 'timeline_2071_2100') {
+			status.years = '2071-2100';
+			initMap(status.years);
+		}
+	});
+
+
 
 // this function allows you to bind a DIV item to the status of a variable
 function initializeButton(_btn_selector, _target_variable) {
@@ -101,7 +136,8 @@ function initializeButton(_btn_selector, _target_variable) {
 
 function initMap(_years) {
 	//render all the layers
-	console.log(status.show_TX30);
+	console.log('initialize',_years);
+	clear();
 
 	l1.color = '#ff0086';
 	l1.init(_years, 'TX30', 'RCP85');
@@ -136,8 +172,7 @@ function initMap(_years) {
 function updateLayers(_x, _y) {
 
 	clear();
-	//background('white');
-	//image(mapImg, 0, 0);
+	//image(italy_bg,0,0,w,h);
 	blendMode(MULTIPLY);
 	if(status.show_TX30) {
 		l1_45.invertMask(_x, _y, lens_size);
@@ -168,7 +203,8 @@ function GeoLayer(_data, _maxval, _map, _width, _height) {
 
 	// prepare data
 	this.init = function(_year, _variable, _scenario) {
-
+		//flush points
+		points = [];
 		// test un po' stupidino
 		var p1 = myMap.latLngToPixel(_data[0].lat, _data[0].lon);
 		var p2 = myMap.latLngToPixel(_data[1].lat, _data[1].lon);
@@ -200,11 +236,14 @@ function GeoLayer(_data, _maxval, _map, _width, _height) {
 	}
 	this.draw = function() {
 		layer.clear();
+		//layer.background('white');
 		layer.noStroke();
 		layer.fill(this.color);
 		points.forEach(function(p) {
 			layer.ellipse(p.x, p.y, p.size, p.size);
 		});
+
+		this.rendered = createImage(this.width, this.height);
 
 		this.rendered.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
 
@@ -295,6 +334,8 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 	}
 
 	this.draw = function() {
+		layer.clear();
+		layer.background('white');
 		layer.noFill();
 		layer.strokeWeight(0.2);
 		layer.stroke('black');

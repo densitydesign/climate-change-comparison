@@ -6,12 +6,9 @@
 	<title></title>
 	<meta name="description" content="">
 	<meta name="author" content="SitePoint">
-	
 	<!--	import font-->
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
-
-
 	<!--[if lt IE 9]>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
 	<![endif]-->
@@ -22,32 +19,22 @@
 	<script src="lib/mappa.js" type="text/javascript"></script>
 	<script src="lib/underscore.min.js" type="text/javascript"></script>
 	<script src="lib/p5.collide2d.min.js" type="text/javascript"></script>
-
+	<script src="lib/d3.min.js" type="text/javascript"></script>
 	<!--	import css-->
 	<link rel="stylesheet" href="style.css">
-	
-	<!--	import js sketch-->
-	<script src="./js/sketch.js"></script>
-
-
 </head>
 
-
-
 <body>
-
 	<!--
  sfondo da mettere sotto a tutto
 <img src="./assets/sfondo.jpg" height="100%">
 -->
-
 	<div id="container">
 		<!--		 Left panel with buttons -->
 		<div id="left-panel">
 			<div class="intro">
 				SELEZIONA I LIVELLI:
 			</div>
-
 			<div class="riq">
 				<div class="title scrittaMagenta">
 					Giorni molto caldi
@@ -68,7 +55,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="riq">
 				<div class="title scrittaYellow">
 					Eventi estremi
@@ -89,7 +75,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="riq">
 				<div class="title scrittaCyan">
 					Piogge estive
@@ -102,16 +87,15 @@
 				</div>
 				<div class="legenda">
 					<div class="subtitle">
-						 -1 mm &nbsp;
+						-1 mm &nbsp;
 					</div>
 					<img src="./assets/legenda3.jpg" height="16">
 					<div class="subtitle">
-						 &nbsp; -410 mm
+						&nbsp; -410 mm
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<!--		 Central visualization -->
 		<div id="visualization">
 			<div id="map">
@@ -121,36 +105,48 @@
 					SELEZIONA IL TEMPO:
 				</div>
 				<div class="line">
-
-
-					<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 24.5">
-  <defs>
-
-  </defs>
-  <title>sd</title>
-  <rect class="cls-1" x="68.71" y="0.55" width="57.51" height="14.3" rx="7.15" ry="7.15"/>
-  <line class="cls-2" x1="2" y1="7.85" x2="195.75" y2="7.85"/>
-  <circle class="cls-3" cx="97.4" cy="7.86" r="2.3"/>
-  <text class="cls-4" transform="translate(16.76 22.81)">2011-2040</text>
-  <text class="cls-5" transform="translate(81.23 22.81)">2041-2070</text>
-  <text class="cls-4" transform="translate(156.73 22.81)">2071-2100</text>
-  <circle class="cls-6" cx="28.9" cy="7.86" r="2.3"/>
-  <circle class="cls-6" cx="168.62" cy="7.86" r="2.3"/>
-  <rect class="cls-7" x="68.71" y="0.5" width="57.51" height="14.3" rx="7.15" ry="7.15"/>
-</svg>
-
-
+					<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="443px" height="70px" viewBox="0 0 443 70" style="enable-background:new 0 0 443 70;" xml:space="preserve">
+						<title>timeLine2</title>
+						<g id="base">
+							<line style="fill:none;stroke:#D8D8D8;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10;" x1="10.1" y1="26" x2="431.9" y2="26" />
+							<circle style="opacity:0.2;fill:#454545;enable-background:new    ;" cx="217.8" cy="26.1" r="5" />
+							<text transform="matrix(1 0 0 1 42.23 58.6101)" style="fill:#D8D8D8; font-family:'PTSans-Regular'; font-size:11.2294px;">2011-2040</text>
+							<text transform="matrix(1 0 0 1 190.58 58.6101)" style="fill:#D8D8D8; font-family:'PTSans-Regular'; font-size:11.2294px;">2041-2070</text>
+							<text transform="matrix(1 0 0 1 346.92 58.6101)" style="fill:#D8D8D8; font-family:'PTSans-Regular'; font-size:11.2294px;">2071-2100</text>
+							<circle style="opacity:0.2;fill:#454545;enable-background:new    ;" cx="68.7" cy="26.1" r="5" />
+							<circle style="opacity:0.2;fill:#454545;enable-background:new    ;" cx="372.8" cy="26.1" r="5" />
+						</g>
+						<g id="timeline_2071_2100" class="timeline_button">
+							<rect x="329" y="45" style="fill:#FFFFFF;" width="88" height="22" />
+							<circle style="fill:#454545;" cx="372.8" cy="26.2" r="5" />
+							<text transform="matrix(1 0 0 1 337.58 58.72)" style="fill:#454545; font-family:'PTSans-Regular'; font-size:15px;">2071-2100</text>
+							<path style="fill:none;stroke:#454545;stroke-width:2;stroke-miterlimit:10;" d="M325.9,10.1H420c8.6,0,15.6,7,15.6,15.6l0,0c0,8.6-7,15.6-15.6,15.6h-94.1c-8.6,0-15.6-7-15.6-15.6l0,0C310.3,17.1,317.3,10.1,325.9,10.1z" />
+						</g>
+						<g id="timeline_2041_2070" class="timeline_button">
+							<rect x="174" y="45" style="fill:#FFFFFF;" width="88" height="22" />
+							<circle style="fill:#454545;" cx="217.8" cy="26.2" r="5" />
+							<text transform="matrix(1 0 0 1 182.58 58.72)" style="fill:#454545; font-family:'PTSans-Regular'; font-size:15px;">2041-2070</text>
+							<path style="fill:none;stroke:#454545;stroke-width:2;stroke-miterlimit:10;" d="M170.9,10.1H265c8.6,0,15.6,7,15.6,15.6l0,0c0,8.6-7,15.6-15.6,15.6h-94.1c-8.6,0-15.6-7-15.6-15.6l0,0C155.3,17.1,162.3,10.1,170.9,10.1z" />
+						</g>
+						<g id="timeline_2011_2040" class="timeline_button selected">
+							<rect x="25" y="45" style="fill:#FFFFFF;" width="88" height="22" />
+							<circle style="fill:#454545;" cx="68.8" cy="26.2" r="5" />
+							<text transform="matrix(1 0 0 1 33.58 58.72)" style="fill:#454545; font-family:'PTSans-Regular'; font-size:15px;">2011-2040</text>
+							<path style="fill:none;stroke:#454545;stroke-width:2;stroke-miterlimit:10;" d="M21.9,10.1H116c8.6,0,15.6,7,15.6,15.6l0,0c0,8.6-7,15.6-15.6,15.6H21.9c-8.6,0-15.6-7-15.6-15.6l0,0C6.3,17.1,13.3,10.1,21.9,10.1z" />
+						</g>
+					</svg>
 				</div>
 			</div>
 		</div>
-
 		<!--		 Right visualization -->
-
 		<div id="right-panel">
 			<div class="biancoDestra">
 				<div class="testo">
 					<!--					<br>-->
-					<p>La mappa mostra gli scenari futuri di cambiamento climatico in assenza di politiche climatiche.<br> Ogni livello rappresenta valori relativi a un differente indicatore climatico. La densità dei puntini mostra la quantità, per ogni componente, a cui sarà soggetta l’Italia nei prossimi 30, 60 e 90 anni. Le mappe sono sovrapponibili per permettere una visione completa della situazione climatica a cui sarà soggetto il nostro Paese nel futuro. <br> <b> Cosa succederebbe se venissero attuate politiche climatiche? </b> <br>Toccando lo schermo è possibile esplorare la situazione che mostra la differenza con uno scenario nel quale si ipotizza siano adottate misure di mitigazione dei cambiamenti climatici.
+					<p>La mappa mostra gli scenari futuri di cambiamento climatico in assenza di politiche climatiche.
+						<br> Ogni livello rappresenta valori relativi a un differente indicatore climatico. La densità dei puntini mostra la quantità, per ogni componente, a cui sarà soggetta l’Italia nei prossimi 30, 60 e 90 anni. Le mappe sono sovrapponibili per permettere una visione completa della situazione climatica a cui sarà soggetto il nostro Paese nel futuro.
+						<br> <b> Cosa succederebbe se venissero attuate politiche climatiche? </b>
+						<br>Toccando lo schermo è possibile esplorare la situazione che mostra la differenza con uno scenario nel quale si ipotizza siano adottate misure di mitigazione dei cambiamenti climatici.
 					</p>
 				</div>
 				<div class="testo2 scrittaMagenta">
@@ -166,16 +162,12 @@
 					</p>
 				</div>
 			</div>
-			
 			<div class="testoSotto">
-					<!--					<br>-->
-					<i>NB. I valori espressi negli scenari climatici sono stime soggette a diverse fonti di incertezza e pertanto vanno considerate come segnali di una tendenza generale e non come dati puntuali.
+				<!--					<br>-->
+				<i>NB. I valori espressi negli scenari climatici sono stime soggette a diverse fonti di incertezza e pertanto vanno considerate come segnali di una tendenza generale e non come dati puntuali.
 					</i>
-				</div>
-			
+			</div>
 		</div>
-
-
 		<!--
 		<div id="right-panel">
 
@@ -246,14 +238,11 @@
 
 		</div>
 -->
-
-
-
-
-
-
-
 	</div>
+
+<!--	import js sketch-->
+<script src="js/sketch.js"></script>
+
 </body>
 
 </html>
