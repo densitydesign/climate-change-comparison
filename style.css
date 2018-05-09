@@ -7,14 +7,13 @@ body {
 #container {
 	width: 1920px;
 	height: 1080px;
-	border: 1px dashed;
+	/*border: 1px dashed;*/
 	background-image: url("./assets/sfondo.jpg");
 	background-size: 100%;
 
 }
 
 #left-panel {
-	height: 100%;
 	width: 380px;
 	float: left;
     margin-top:35px;
@@ -341,5 +340,14 @@ img{
 
 .graph {
 	width: 390px;
-	height: calc(880px/3);
+	height: 180px;
+}
+
+#areachart p {
+	font-family: Work Sans;
+	font-size: 15px;
+	/*line-height: 30px;*/
+	margin-left: 15px;
+	margin-right: 15px;
+}
 }

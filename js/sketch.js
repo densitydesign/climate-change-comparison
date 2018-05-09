@@ -13,11 +13,11 @@ const status = {
 
 const graphVars = {
 	w: 390,
-	h: 880/3,
+	h: 180,
 	gray: 'gray',
-	red: 'red',
-	blue: 'blue',
-	yellow: 'yellow'
+	red: '#ff0086',
+	blue: '#00fff8',
+	yellow: '#f9ff00'
 }
 
 // API Key for MapboxGL.
@@ -178,28 +178,28 @@ function initMap(_years) {
 	console.log('initialize', _years);
 	clear();
 
-	l1.color = '#ff0086';
+	l1.color = graphVars.red;
 	l1.init(_years, 'TX30', 'RCP85');
 	l1.draw();
 
-	l1_45.color = '#ff0086';
+	l1_45.color = graphVars.red;
 	l1_45.init(_years, 'TX30', 'RCP45');
 	l1_45.draw();
 
-	l2.color = '#00fff8';
+	l2.color = graphVars.blue;
 	l2.init(_years, 'PRCPTOT', 'RCP85');
 	l2.draw();
 
-	l2_45.color = '#00fff8';
+	l2_45.color = graphVars.blue;
 	l2_45.init(_years, 'PRCPTOT', 'RCP45');
 	l2_45.draw();
 
-	l3.color = '#f9ff00';
+	l3.color = graphVars.yellow;
 	l3.init(_years, 'PR95PERC', 'RCP85');
 	l3.draw();
 
 
-	l3_45.color = '#f9ff00';
+	l3_45.color = graphVars.yellow;
 	l3_45.init(_years, 'PR95PERC', 'RCP45');
 	l3_45.draw();
 
@@ -210,15 +210,11 @@ function initMap(_years) {
 
 var selectedProvince = '';
 
-var svg1 = d3.select('#graph_01')
-
-console.log(svg1.attr("width"));
+// variables for all the graphs
 
 var margin = { top: 10, right: 10, bottom: 20, left: 30 };
- var sw = graphVars.w - margin.left - margin.right;
+var sw = graphVars.w - margin.left - margin.right;
 var sh = graphVars.h - margin.top - margin.bottom;
-
-var g1 = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x = d3.scaleOrdinal()
 	.domain(["2011-2040", "2041-2070", "2071-2100"])
@@ -233,6 +229,11 @@ var area = d3.area()
 	.y1(function(d) { return y(+d.valore); })
 	.y0(y(0));
 
+//variables for first graph
+var svg1 = d3.select('#graph_01')
+
+var g1 = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 var paths_g1 = g1.append('g')
 
 g1.append("g")
@@ -241,6 +242,43 @@ g1.append("g")
 
 g1.append("g")
 	.call(d3.axisLeft(y))
+
+//variables for second graph
+var svg2 = d3.select('#graph_02')
+
+var g2 = svg2.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var paths_g2 = g2.append('g')
+
+g2.append("g")
+	.attr("transform", "translate(0," + sh + ")")
+	.call(d3.axisBottom(x));
+
+g2.append("g")
+	.call(d3.axisLeft(y))
+
+//variables for third graph
+var y3 = d3.scaleLinear()
+	.rangeRound([sh, 0])
+	.domain([-410, 0]);
+
+var area3 = d3.area()
+	.x(function(d) { return x(d.anno); })
+	.y1(function(d) { return y3(+d.valore); })
+	.y0(y3(0));
+
+var svg3 = d3.select('#graph_03')
+
+var g3 = svg3.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var paths_g3 = g3.append('g')
+
+g3.append("g")
+	.attr("transform", "translate(0," + y3(0) + ")")
+	.call(d3.axisTop(x));
+
+g3.append("g")
+	.call(d3.axisLeft(y3))
 
 
 function updateLayers(_x, _y, _showPanel) {
@@ -267,21 +305,17 @@ function updateLayers(_x, _y, _showPanel) {
 
 		selectedProvince = newprov.properties.DEN_CMPRO;
 
-		// var tempdata = prov_data[selectedProvince]['PR95PERC']
-		// 	.filter(function(d) { return d.proiezione === "RCP85" })
-		// 	.sort(function(a, b) { return a.anno - b.anno })
 
-		//console.log(prov_data[selectedProvince]['PR95PERC']);
-
-		var tempdata = d3.nest()
+		//first graph
+		var PR95PERC_data = d3.nest()
 				.key(function(e){ return e.proiezione})
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['PR95PERC'])
 
-		console.log(tempdata);
+		console.log(PR95PERC_data);
 
 		var paths1 = paths_g1.selectAll("path")
-			.data(tempdata);
+			.data(PR95PERC_data);
 		
 		paths1.enter()
 			.append("path")
@@ -290,6 +324,44 @@ function updateLayers(_x, _y, _showPanel) {
 			.merge(paths1)
 			.transition()
 			.attr("d", function(d){console.log(d); return area(d.values)});
+
+		//second graph
+		var TX30_data = d3.nest()
+				.key(function(e){ return e.proiezione})
+				.sortKeys(d3.descending)
+				.entries(prov_data[selectedProvince]['TX30'])
+
+		console.log(TX30_data);
+
+		var paths2 = paths_g2.selectAll("path")
+			.data(TX30_data);
+		
+		paths2.enter()
+			.append("path")
+			.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.gray})
+			//.style("opacity",0.5)
+			.merge(paths2)
+			.transition()
+			.attr("d", function(d){console.log(d); return area(d.values)});
+
+		//third graph
+		var PRCPTOT_data = d3.nest()
+				.key(function(e){ return e.proiezione})
+				.sortKeys(d3.descending)
+				.entries(prov_data[selectedProvince]['PRCPTOT'])
+
+		console.log(PRCPTOT_data);
+
+		var paths3 = paths_g3.selectAll("path")
+			.data(PRCPTOT_data);
+		
+		paths3.enter()
+			.append("path")
+			.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.gray})
+			//.style("opacity",0.5)
+			.merge(paths3)
+			.transition()
+			.attr("d", function(d){console.log(d); return area3(d.values)});
 	}
 
 }
