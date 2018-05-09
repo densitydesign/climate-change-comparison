@@ -2,6 +2,8 @@
 	--yellow: #f9ff00;
 	--blue: #00fff8;
 	--red: #ff0086;
+	--lightGrey: #d8d8d8;
+	--darkGrey: #454545;
 }
 
 
@@ -73,7 +75,7 @@ body {
 }
 
 #toggle-1 {
-	outline-color: #d8d8d8;
+	outline-color: var(--lightGrey);
 	margin-top: 15px;
 	height: 210px;
 	width: 210px;
@@ -91,7 +93,7 @@ body {
 }
 
 #toggle-2 {
-	outline-color: #d8d8d8;
+	outline-color: var(--lightGrey);
 	outline-width: 2px;
 	margin-top: 15px;
 	background-image: url("./assets/bottone3.jpg");
@@ -108,7 +110,7 @@ body {
 }
 
 #toggle-3 {
-	outline-color: #d8d8d8;
+	outline-color: var(--lightGrey);
 	margin-top: 15px;
 	background-image: url("./assets/bottone2.jpg");
 	background-size: 100%;
@@ -201,7 +203,7 @@ body {
 }
 
 .cls-2 {
-	stroke: #d8d8d8;
+	stroke: var(--lightGrey);
 	stroke-linecap: round;
 	stroke-width: 4px;
 }
@@ -209,12 +211,12 @@ body {
 .cls-3,
 .cls-5,
 .cls-6 {
-	fill: #454545;
+	fill: var(--darkGrey);
 }
 
 .cls-4 {
 	font-size: 5.16px;
-	fill: #d8d8d8;
+	fill: var(--lightGrey);
 }
 
 .cls-4,
@@ -231,37 +233,20 @@ body {
 }
 
 .cls-7 {
-	stroke: #454545;
+	stroke: var(--darkGrey);
 }
-
-
-
 
 .right-panel {
 	height: 100%;
-	/*	outline: 1px dashed #000;*/
 	outline-offset: -1px;
 	float: right;
 	margin-right: 70px;
-	/*	background: yellow;*/
 }
-
-
-/*
-.rightRiq {
-	outline: 2px solid #d8d8d8;
-	margin-top: 15px;
-	height: 210px;
-	width: 310px;
-
-
-}
-*/
 
 .biancoDestra {
 	width: 390px;
 	height: 880px;
-	outline: 2px solid #d8d8d8;
+	outline: 2px solid var(--lightGrey);
 	background: white;
 	margin-top: 100px;
 	position: relative;
@@ -274,7 +259,6 @@ body {
 	line-height: 30px;
 	margin-left: 30px;
 	padding-top: 25px;
-	/*	text-align: justify;*/
 }
 
 .testo2 {
@@ -283,7 +267,6 @@ body {
 	font-size: 13px;
 	line-height: 25px;
 	margin-left: 30px;
-	/*	text-align: justify;*/
 }
 
 .testoSotto {
@@ -293,7 +276,6 @@ body {
 	line-height: 17px;
 	margin-left: 0px;
 	margin-top: 15px;
-	/*	text-align: justify;*/
 }
 
 .timeline_button {

@@ -4,8 +4,8 @@ var myCanvas;
 //By default, none is visible.
 const status = {
 	show_TX30: false,
-	show_PRCPTOT: false,
 	show_PR95PERC: false,
+	show_PRCPTOT: false,
 	years: '2011-2040'
 };
 
@@ -15,7 +15,8 @@ const graphVars = {
 	gray: 'gray',
 	red: '#ff0086',
 	blue: '#00fff8',
-	yellow: '#f9ff00'
+	yellow: '#f9ff00',
+	lightGray: '#d8d8d8'
 }
 
 // API Key for MapboxGL.
@@ -38,7 +39,7 @@ const myMap = mappa.staticMap(options);
 let mapImg;
 
 // datasets
-let fullData, province, prov_data;
+let fullData, province, confini, prov_data;
 //images
 let italy_bg;
 
@@ -50,10 +51,10 @@ let w, h;
 let canvas;
 let l1, l2, l3,
 	l1_45, l2_45, l3_45,
-	prov_layer
+	prov_layer, italy_layer
 
 //lens variables
-let lens_size = 300;
+let lens_size = 200;
 
 //timeline buttons
 let timeline_btns = [];
@@ -63,6 +64,7 @@ function preload() {
 	fullData = loadJSON('assets/climatechange_data.json');
 	province = loadJSON('assets/contorniProvince.json');
 	italy_bg = loadImage('assets/italy_bg.png');
+	confini = loadJSON('assets/contorni_italia.json');
 
 	//load and parse data for single provinces
 	d3.tsv("assets/climate-change-provincie.tsv").then(function(data) {
@@ -77,18 +79,6 @@ function preload() {
 				prov_data[d.provincia][d.variabile] = [];
 			}
 			prov_data[d.provincia][d.variabile].push(d);
-			// if (d.scenario in prov_data[d.provincia][d.variabile] === false) {
-			// 	prov_data[d.provincia][d.variabile][d.scenario] = [];
-			// }
-
-			// prov_data[d.provincia][d.variabile][d.scenario].push(d);
-
-			// if (d.variabile in prov_data[d.provincia][d.anno] === false) {
-			// 	prov_data[d.provincia][d.anno][d.variabile] = {};
-			// }
-			// if (d.proiezione in prov_data[d.provincia][d.anno][d.variabile] === false) {
-			// 	prov_data[d.provincia][d.anno][d.variabile][d.proiezione] = +d.valore;
-			// }
 		})
 	})
 }
@@ -114,11 +104,12 @@ function setup() {
 	//initialize map
 	l1 = new GeoLayer(fullData.values, 74, myMap, w, h);
 	l1_45 = new GeoLayer(fullData.values, 74, myMap, w, h);
-	l2 = new GeoLayer(fullData.values, -410, myMap, w, h);
-	l2_45 = new GeoLayer(fullData.values, -410, myMap, w, h);
-	l3 = new GeoLayer(fullData.values, 88, myMap, w, h);
-	l3_45 = new GeoLayer(fullData.values, 88, myMap, w, h);
+	l2 = new GeoLayer(fullData.values, 88, myMap, w, h);
+	l2_45 = new GeoLayer(fullData.values, 88, myMap, w, h);
+	l3 = new GeoLayer(fullData.values, -410, myMap, w, h);
+	l3_45 = new GeoLayer(fullData.values, -410, myMap, w, h);
 	prov_layer = new ShapeFileLayer(province, myMap, w, h);
+	italy_layer = new ShapeFileLayer(confini, myMap, w, h);
 
 	initMap(status.years);
 
@@ -184,24 +175,25 @@ function initMap(_years) {
 	l1_45.init(_years, 'TX30', 'RCP45');
 	l1_45.draw();
 
-	l2.color = graphVars.yellow;
-	l2.init(_years, 'PRCPTOT', 'RCP85');
+	l2.color = graphVars.blue;
+	l2.init(_years, 'PR95PERC', 'RCP85');
 	l2.draw();
 
-	l2_45.color = graphVars.yellow;
-	l2_45.init(_years, 'PRCPTOT', 'RCP45');
+	l2_45.color = graphVars.blue;
+	l2_45.init(_years, 'PR95PERC', 'RCP45');
 	l2_45.draw();
 
-	l3.color = graphVars.blue;
-	l3.init(_years, 'PR95PERC', 'RCP85');
+	l3.color = graphVars.yellow;
+	l3.init(_years, 'PRCPTOT', 'RCP85');
 	l3.draw();
 
 
-	l3_45.color = graphVars.blue;
-	l3_45.init(_years, 'PR95PERC', 'RCP45');
+	l3_45.color = graphVars.yellow;
+	l3_45.init(_years, 'PRCPTOT', 'RCP45');
 	l3_45.draw();
 
 	prov_layer.draw();
+	italy_layer.draw();
 
 	updateLayers(0, 0, false);
 }
@@ -240,7 +232,7 @@ let axisRight1 = g1.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
 axisRight1.call(d3.axisRight(y).tickSize(-sw).tickPadding(14));
 axisRight1.select(".domain").remove();
-axisRight1.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#d8d8d8").attr("stroke-dasharray", "2,2");
+axisRight1.selectAll(".tick:not(:first-of-type) line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2");
 
 var paths_g1 = g1.append('g');
 
@@ -285,7 +277,8 @@ g3.append("g")
 
 function updateLayers(_x, _y, _showPanel) {
 	clear();
-	//image(italy_bg,0,0,w,h);
+	image(italy_layer.image,0,0,w,h);
+
 	blendMode(MULTIPLY);
 	if (status.show_TX30) {
 		l1_45.invertMask(_x, _y, lens_size);
@@ -294,43 +287,47 @@ function updateLayers(_x, _y, _showPanel) {
 	} else {
 		d3.select('#graph_01_container').style("display", "none");
 	}
-	if (status.show_PR95PERC) {
+	if (status.show_PRCPTOT) {
 		l3.mask(_x, _y, lens_size)
 		l3_45.invertMask(_x, _y, lens_size);
-		d3.select('#graph_02_container').style("display", "inline");
-	} else {
-		d3.select('#graph_02_container').style("display", "none");
-	}
-	if (status.show_PRCPTOT) {
-		l2_45.invertMask(_x, _y, lens_size);
-		l2.mask(_x, _y, lens_size);
 		d3.select('#graph_03_container').style("display", "inline");
 	} else {
 		d3.select('#graph_03_container').style("display", "none");
+	}
+	if (status.show_PR95PERC) {
+		l2_45.invertMask(_x, _y, lens_size);
+		l2.mask(_x, _y, lens_size);
+		d3.select('#graph_02_container').style("display", "inline");
+	} else {
+		d3.select('#graph_02_container').style("display", "none");
 	}
 
 	if (_showPanel && !(!status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT)) {
 		var newprov = prov_layer.mask(_x, _y, lens_size);
 
+		stroke('black');
+		noFill();
+		ellipse(_x, _y, lens_size);
+
 		if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
 
 			selectedProvince = newprov.properties.DEN_CMPRO;
-			//title
 
+			//title
 			d3.select('#nomeprovincia').html('Provincia di ' + selectedProvince);
 
 			//first graph
 			var TX30_data = d3.nest()
-					.key(function(e){ return e.proiezione})
-					.sortKeys(d3.descending)
-					.entries(prov_data[selectedProvince]['TX30'])
+				.key(function(e){ return e.proiezione})
+				.sortKeys(d3.descending)
+				.entries(prov_data[selectedProvince]['TX30']);
 
 			var paths1 = paths_g1.selectAll("path")
 				.data(TX30_data);
 
 			paths1.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.gray})
+				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.lightGray;})
 				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
 				.merge(paths1)
 				.transition()
@@ -343,16 +340,16 @@ function updateLayers(_x, _y, _showPanel) {
 
 			//second graph
 			var PR95PERC_data = d3.nest()
-					.key(function(e){ return e.proiezione})
-					.sortKeys(d3.descending)
-					.entries(prov_data[selectedProvince]['PR95PERC'])
+				.key(function(e){ return e.proiezione})
+				.sortKeys(d3.descending)
+				.entries(prov_data[selectedProvince]['PR95PERC']);
 
 			var paths2 = paths_g2.selectAll("path")
 				.data(PR95PERC_data);
 
 			paths2.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.gray})
+				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.lightGray;})
 				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
 				.merge(paths2)
 				.transition()
@@ -365,16 +362,16 @@ function updateLayers(_x, _y, _showPanel) {
 
 			//third graph
 			var PRCPTOT_data = d3.nest()
-					.key(function(e){ return e.proiezione})
-					.sortKeys(d3.descending)
-					.entries(prov_data[selectedProvince]['PRCPTOT'])
+				.key(function(e){ return e.proiezione})
+				.sortKeys(d3.descending)
+				.entries(prov_data[selectedProvince]['PRCPTOT']);
 
 			var paths3 = paths_g3.selectAll("path")
 				.data(PRCPTOT_data);
 
 			paths3.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.gray})
+				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.lightGray;})
 				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
 				.merge(paths3)
 				.transition()
@@ -438,6 +435,11 @@ function GeoLayer(_data, _maxval, _map, _width, _height) {
 				'y': pos.y,
 				'size': size
 			};
+			//add a second size if scenario is RCP45
+			if (_scenario == 'RCP45') {
+				p.outsize = map(Math.sqrt(Math.abs(item[_year][_variable]['RCP85'])), 0, maxVal, 0, distance);
+				p.innersize = map(Math.sqrt(Math.abs(item[_year][_variable]['RCP85'] - item[_year][_variable]['RCP45'])), 0, maxVal, 0, distance);
+			}
 			points.push(p);
 		})
 	}
@@ -445,9 +447,18 @@ function GeoLayer(_data, _maxval, _map, _width, _height) {
 		layer.clear();
 		//layer.background('white');
 		layer.noStroke();
+		layer.ellipseMode(CENTER);
 		layer.fill(this.color);
+		var c = this.color;
 		points.forEach(function(p) {
+			if(p.outsize != null){
+				layer.fill(c);
+				layer.ellipse(p.x, p.y, p.innersize);
+				// layer.fill(graphVars.lightGray);
+				// layer.ellipse(p.x, p.y, p.size);
+			} else {
 			layer.ellipse(p.x, p.y, p.size, p.size);
+			}
 		});
 
 		this.rendered = createImage(this.width, this.height);
@@ -541,8 +552,9 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 	}
 
 	this.draw = function() {
+		this.image = createImage(this.width, this.height);
 		layer.clear();
-		layer.background('white');
+		//layer.background('white');
 		layer.noFill();
 		layer.strokeWeight(0.2);
 		layer.stroke('black');
@@ -618,9 +630,6 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 	//
 }
 
-// function mouseMoved() {
-// 	updateLayers(mouseX, mouseY);
-// }
 function touchStarted() {
 	if (touches.length > 0) {
 		updateLayers(touches[0].x, touches[0].y, true);
