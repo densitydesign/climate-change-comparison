@@ -9,6 +9,17 @@ const status = {
 	years: '2011-2040'
 };
 
+// graphs variables
+
+const graphVars = {
+	w: 390,
+	h: 880/3,
+	gray: 'gray',
+	red: 'red',
+	blue: 'blue',
+	yellow: 'yellow'
+}
+
 // API Key for MapboxGL.
 const key = 'pk.eyJ1IjoibWlraW1hIiwiYSI6IjNvWUMwaUEifQ.Za_-O03W3UdQxZwS3bLxtg';
 
@@ -29,7 +40,7 @@ const myMap = mappa.staticMap(options);
 let mapImg;
 
 // datasets
-let fullData, province;
+let fullData, province, prov_data;
 //images
 let italy_bg;
 
@@ -53,7 +64,35 @@ let timeline_btns = [];
 function preload() {
 	fullData = loadJSON('assets/climatechange_data.json');
 	province = loadJSON('assets/contorniProvince.json');
-	italy_bg = loadImage('assets/italy_bg.png')
+	italy_bg = loadImage('assets/italy_bg.png');
+
+	//load and parse data for single provinces
+	d3.tsv("assets/climate-change-provincie.tsv").then(function(data) {
+
+		prov_data = {};
+		// loading the data
+		data.forEach(function(d) {
+			if (d.provincia in prov_data === false) {
+				prov_data[d.provincia] = {};
+			}
+			if (d.variabile in prov_data[d.provincia] === false) {
+				prov_data[d.provincia][d.variabile] = [];
+			}
+			prov_data[d.provincia][d.variabile].push(d);
+			// if (d.scenario in prov_data[d.provincia][d.variabile] === false) {
+			// 	prov_data[d.provincia][d.variabile][d.scenario] = [];
+			// }
+
+			// prov_data[d.provincia][d.variabile][d.scenario].push(d);
+
+			// if (d.variabile in prov_data[d.provincia][d.anno] === false) {
+			// 	prov_data[d.provincia][d.anno][d.variabile] = {};
+			// }
+			// if (d.proiezione in prov_data[d.provincia][d.anno][d.variabile] === false) {
+			// 	prov_data[d.provincia][d.anno][d.variabile][d.proiezione] = +d.valore;
+			// }
+		})
+	})
 }
 
 function setup() {
@@ -84,31 +123,31 @@ function setup() {
 	prov_layer = new ShapeFileLayer(province, myMap, w, h);
 
 	initMap(status.years);
-	
+
 }
 
 //initialize d3 buttons
 d3.selectAll('.timeline_button')
-	.on('click', function(){
+	.on('click', function() {
+		d3.event.preventDefault();
 		var activeClass = "selected";
-		
+
 		d3.selectAll(".timeline_button")
 			.classed(activeClass, false);
 		d3.select(this).classed(activeClass, true)
-		if(this.id == 'timeline_2011_2040') {
+		if (this.id == 'timeline_2011_2040') {
 			status.years = '2011-2040';
 			initMap(status.years);
 		}
-		if(this.id == 'timeline_2041_2070') {
+		if (this.id == 'timeline_2041_2070') {
 			status.years = '2041-2070';
 			initMap(status.years);
 		}
-		if(this.id == 'timeline_2071_2100') {
+		if (this.id == 'timeline_2071_2100') {
 			status.years = '2071-2100';
 			initMap(status.years);
 		}
 	});
-
 
 
 // this function allows you to bind a DIV item to the status of a variable
@@ -136,7 +175,7 @@ function initializeButton(_btn_selector, _target_variable) {
 
 function initMap(_years) {
 	//render all the layers
-	console.log('initialize',_years);
+	console.log('initialize', _years);
 	clear();
 
 	l1.color = '#ff0086';
@@ -169,25 +208,90 @@ function initMap(_years) {
 	updateLayers(0, 0);
 }
 
-function updateLayers(_x, _y) {
+var selectedProvince = '';
+
+var svg1 = d3.select('#graph_01')
+
+console.log(svg1.attr("width"));
+
+var margin = { top: 10, right: 10, bottom: 20, left: 30 };
+ var sw = graphVars.w - margin.left - margin.right;
+var sh = graphVars.h - margin.top - margin.bottom;
+
+var g1 = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleOrdinal()
+	.domain(["2011-2040", "2041-2070", "2071-2100"])
+	.range([0, sw / 2, sw]);
+
+var y = d3.scaleLinear()
+	.rangeRound([sh, 0])
+	.domain([0, 90]);
+
+var area = d3.area()
+	.x(function(d) { return x(d.anno); })
+	.y1(function(d) { return y(+d.valore); })
+	.y0(y(0));
+
+var paths_g1 = g1.append('g')
+
+g1.append("g")
+	.attr("transform", "translate(0," + sh + ")")
+	.call(d3.axisBottom(x));
+
+g1.append("g")
+	.call(d3.axisLeft(y))
+
+
+function updateLayers(_x, _y, _showPanel) {
 
 	clear();
 	//image(italy_bg,0,0,w,h);
 	blendMode(MULTIPLY);
-	if(status.show_TX30) {
+	if (status.show_TX30) {
 		l1_45.invertMask(_x, _y, lens_size);
 		l1.mask(_x, _y, lens_size);
 	}
-	if(status.show_PRCPTOT){
+	if (status.show_PRCPTOT) {
 		l2_45.invertMask(_x, _y, lens_size);
 		l2.mask(_x, _y, lens_size);
-		
+
 	}
-	if(status.show_PR95PERC){
+	if (status.show_PR95PERC) {
 		l3.mask(_x, _y, lens_size)
 		l3_45.invertMask(_x, _y, lens_size);
 	}
-	prov_layer.mask(_x, _y, lens_size);
+	var newprov = prov_layer.mask(_x, _y, lens_size);
+
+	if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
+
+		selectedProvince = newprov.properties.DEN_CMPRO;
+
+		// var tempdata = prov_data[selectedProvince]['PR95PERC']
+		// 	.filter(function(d) { return d.proiezione === "RCP85" })
+		// 	.sort(function(a, b) { return a.anno - b.anno })
+
+		//console.log(prov_data[selectedProvince]['PR95PERC']);
+
+		var tempdata = d3.nest()
+				.key(function(e){ return e.proiezione})
+				.sortKeys(d3.descending)
+				.entries(prov_data[selectedProvince]['PR95PERC'])
+
+		console.log(tempdata);
+
+		var paths1 = paths_g1.selectAll("path")
+			.data(tempdata);
+		
+		paths1.enter()
+			.append("path")
+			.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.gray})
+			//.style("opacity",0.5)
+			.merge(paths1)
+			.transition()
+			.attr("d", function(d){console.log(d); return area(d.values)});
+	}
+
 }
 
 function GeoLayer(_data, _maxval, _map, _width, _height) {
@@ -404,21 +508,21 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 
 		image(outimg, _mx - _msize / 2, _my - _msize / 2);
 
-		return outimg;
+		return selected;
 	}
 	//first, create polygons
 	this.createPolygons();
 	// 
 }
 
-function mouseMoved() {
-	updateLayers(mouseX, mouseY);
-}
+// function mouseMoved() {
+// 	updateLayers(mouseX, mouseY);
+// }
 
 function touchMoved() {
-	updateLayers(touches[0].x, touches[0].y);
+	updateLayers(touches[0].x, touches[0].y, true);
 }
 
 function touchEnded() {
-	updateLayers(0, 0);
+	updateLayers(0, 0, false);
 }

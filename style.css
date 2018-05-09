@@ -257,7 +257,7 @@ img{
     
      
 
-#right-panel {
+.right-panel {
 	height: 100%;
 /*	outline: 1px dashed #000;*/
 	outline-offset: -1px;
@@ -282,7 +282,8 @@ img{
 	height: 880px;
     outline: 2px solid #d8d8d8;
 	background: white;
-	margin-top: 100px;	
+	margin-top: 100px;
+	position: relative;
 }
 
 .testo {
@@ -320,9 +321,25 @@ img{
 }
 
 .timeline_button {
-	opacity: 0.2;
+	opacity: 0;
 }
 
 .timeline_button.selected {
 	opacity: 1;
+}
+
+#spiega {
+	display: none;
+}
+
+#areachart {
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.graph {
+	width: 390px;
+	height: calc(880px/3);
 }
