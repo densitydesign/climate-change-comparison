@@ -12,8 +12,6 @@ const status = {
 // graphs variables
 
 const graphVars = {
-	w: 390,
-	h: 180,
 	gray: 'gray',
 	red: '#ff0086',
 	blue: '#00fff8',
@@ -205,16 +203,16 @@ function initMap(_years) {
 
 	prov_layer.draw();
 
-	updateLayers(0, 0);
+	updateLayers(0, 0, false);
 }
 
 var selectedProvince = '';
 
 // variables for all the graphs
 
-var margin = { top: 10, right: 10, bottom: 20, left: 30 };
-var sw = graphVars.w - margin.left - margin.right;
-var sh = graphVars.h - margin.top - margin.bottom;
+var margin = { top: 10, right: 120, bottom: 20, left: 80 };
+var sw = +d3.select('#graph_01').style("width").slice(0,-2) - margin.left - margin.right;
+var sh = +d3.select('#graph_01').style("height").slice(0,-2) - margin.top - margin.bottom;
 
 var x = d3.scaleOrdinal()
 	.domain(["2011-2040", "2041-2070", "2071-2100"])
@@ -234,14 +232,18 @@ var svg1 = d3.select('#graph_01')
 
 var g1 = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var paths_g1 = g1.append('g')
-
 g1.append("g")
-	.attr("transform", "translate(0," + sh + ")")
+	.attr("transform", "translate(0," + y(0) + ")")
 	.call(d3.axisBottom(x));
 
-g1.append("g")
-	.call(d3.axisLeft(y))
+let axisRight1 = g1.append("g")
+	.attr("transform", "translate(" + sw + ", 0)");
+axisRight1.call(d3.axisRight(y).tickSize(-sw).tickPadding(14));
+axisRight1.select(".domain").remove();
+axisRight1.selectAll(".tick:not(:first-of-type) line").attr("stroke", "#d8d8d8").attr("stroke-dasharray", "2,2");
+
+var paths_g1 = g1.append('g');
+
 
 //variables for second graph
 var svg2 = d3.select('#graph_02')
@@ -251,7 +253,7 @@ var g2 = svg2.append("g").attr("transform", "translate(" + margin.left + "," + m
 var paths_g2 = g2.append('g')
 
 g2.append("g")
-	.attr("transform", "translate(0," + sh + ")")
+	.attr("transform", "translate(0," + y(0) + ")")
 	.call(d3.axisBottom(x));
 
 g2.append("g")
@@ -282,99 +284,116 @@ g3.append("g")
 
 
 function updateLayers(_x, _y, _showPanel) {
-
 	clear();
 	//image(italy_bg,0,0,w,h);
 	blendMode(MULTIPLY);
 	if (status.show_TX30) {
 		l1_45.invertMask(_x, _y, lens_size);
 		l1.mask(_x, _y, lens_size);
-	}
-	if (status.show_PRCPTOT) {
-		l2_45.invertMask(_x, _y, lens_size);
-		l2.mask(_x, _y, lens_size);
-
+		d3.select('#graph_01_container').style("display", "inline");
+	} else {
+		d3.select('#graph_01_container').style("display", "none");
 	}
 	if (status.show_PR95PERC) {
 		l3.mask(_x, _y, lens_size)
 		l3_45.invertMask(_x, _y, lens_size);
+		d3.select('#graph_02_container').style("display", "inline");
+	} else {
+		d3.select('#graph_02_container').style("display", "none");
 	}
-	var newprov = prov_layer.mask(_x, _y, lens_size);
-
-	if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
-
-		selectedProvince = newprov.properties.DEN_CMPRO;
-		//title
-
-		d3.select('#nomeprovincia').html('Provincia di ' + selectedProvince);
-
-		//first graph
-		var TX30_data = d3.nest()
-				.key(function(e){ return e.proiezione})
-				.sortKeys(d3.descending)
-				.entries(prov_data[selectedProvince]['TX30'])
-
-		var paths1 = paths_g1.selectAll("path")
-			.data(TX30_data);
-		
-		paths1.enter()
-			.append("path")
-			.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.gray})
-			//.style("opacity",0.5)
-			.merge(paths1)
-			.transition()
-			.attr("d", function(d){console.log(d); return area(d.values)});
-
-		//first text
-		var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-		var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
-		d3.select(desc_01).html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) +'.')
-
-		//second graph
-		var PR95PERC_data = d3.nest()
-				.key(function(e){ return e.proiezione})
-				.sortKeys(d3.descending)
-				.entries(prov_data[selectedProvince]['PR95PERC'])
-
-		var paths2 = paths_g2.selectAll("path")
-			.data(PR95PERC_data);
-		
-		paths2.enter()
-			.append("path")
-			.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.gray})
-			//.style("opacity",0.5)
-			.merge(paths2)
-			.transition()
-			.attr("d", function(d){console.log(d); return area(d.values)});
-
-		//second text
-		var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-		var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
-		d3.select(desc_02).html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.');
-		
-		//third graph
-		var PRCPTOT_data = d3.nest()
-				.key(function(e){ return e.proiezione})
-				.sortKeys(d3.descending)
-				.entries(prov_data[selectedProvince]['PRCPTOT'])
-
-		var paths3 = paths_g3.selectAll("path")
-			.data(PRCPTOT_data);
-		
-		paths3.enter()
-			.append("path")
-			.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.gray})
-			//.style("opacity",0.5)
-			.merge(paths3)
-			.transition()
-			.attr("d", function(d){console.log(d); return area3(d.values)});
-
-		//third text
-		var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-		var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
-		d3.select(desc_03).html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.');
-		
+	if (status.show_PRCPTOT) {
+		l2_45.invertMask(_x, _y, lens_size);
+		l2.mask(_x, _y, lens_size);
+		d3.select('#graph_03_container').style("display", "inline");
+	} else {
+		d3.select('#graph_03_container').style("display", "none");
 	}
+
+	if (_showPanel && !(!status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT)) {
+		var newprov = prov_layer.mask(_x, _y, lens_size);
+
+		if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
+
+			selectedProvince = newprov.properties.DEN_CMPRO;
+			//title
+
+			d3.select('#nomeprovincia').html('Provincia di ' + selectedProvince);
+
+			//first graph
+			var TX30_data = d3.nest()
+					.key(function(e){ return e.proiezione})
+					.sortKeys(d3.descending)
+					.entries(prov_data[selectedProvince]['TX30'])
+
+			var paths1 = paths_g1.selectAll("path")
+				.data(TX30_data);
+
+			paths1.enter()
+				.append("path")
+				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.gray})
+				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.merge(paths1)
+				.transition()
+				.attr("d", function(d){return area(d.values)});
+
+			//first text
+			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) +'.').style('opacity', 1);
+
+			//second graph
+			var PR95PERC_data = d3.nest()
+					.key(function(e){ return e.proiezione})
+					.sortKeys(d3.descending)
+					.entries(prov_data[selectedProvince]['PR95PERC'])
+
+			var paths2 = paths_g2.selectAll("path")
+				.data(PR95PERC_data);
+
+			paths2.enter()
+				.append("path")
+				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.gray})
+				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.merge(paths2)
+				.transition()
+				.attr("d", function(d){return area(d.values)});
+
+			//second text
+			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').style('opacity', 1);
+
+			//third graph
+			var PRCPTOT_data = d3.nest()
+					.key(function(e){ return e.proiezione})
+					.sortKeys(d3.descending)
+					.entries(prov_data[selectedProvince]['PRCPTOT'])
+
+			var paths3 = paths_g3.selectAll("path")
+				.data(PRCPTOT_data);
+
+			paths3.enter()
+				.append("path")
+				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.gray})
+				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.merge(paths3)
+				.transition()
+				.attr("d", function(d){return area3(d.values)});
+
+			//third text
+			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').style('opacity', 1);
+
+			d3.select('#spiega').style("opacity", 1e-6);
+			d3.select('#areachart').style("opacity", 1);
+		}
+	} else {
+
+		d3.select('#spiega').style("opacity", 1);
+		d3.select('#areachart').style("opacity", 1e-6);
+	}
+
 
 }
 
@@ -596,17 +615,25 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 	}
 	//first, create polygons
 	this.createPolygons();
-	// 
+	//
 }
 
 // function mouseMoved() {
 // 	updateLayers(mouseX, mouseY);
 // }
+function touchStarted() {
+	if (touches.length > 0) {
+		updateLayers(touches[0].x, touches[0].y, true);
+	}
+}
 
 function touchMoved() {
-	updateLayers(touches[0].x, touches[0].y, true);
+	if (touches.length > 0) {
+		updateLayers(touches[0].x, touches[0].y, true);
+	}
 }
 
 function touchEnded() {
 	updateLayers(0, 0, false);
+	selectedProvince = '';
 }
