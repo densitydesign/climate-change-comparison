@@ -4,6 +4,7 @@
 	--red: #ff0086;
 	--lightGrey: #d8d8d8;
 	--darkGrey: #454545;
+	--black: #000000;
 }
 
 
@@ -306,14 +307,17 @@ body {
 	font-family: Work Sans;
 	font-size: 14px;
 	/*line-height: 30px;*/
-	margin-top: 0;
-	margin-left: 15px;
-	margin-right: 15px;
+	margin: 0 15px 5px;
 }
 
 p#nomeprovincia {
 	font-family: Work Sans;
 	font-size: 15px;
 	text-transform: uppercase;
-	margin-top: 20px;
+	margin: 20px 15px 5px;
+}
+.graph-rect {
+	fill: none;
+	stroke: var(--black);
+	stroke-width: 2px;
 }

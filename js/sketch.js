@@ -12,7 +12,8 @@ const status = {
 // graphs variables
 
 const graphVars = {
-	gray: 'gray',
+	black: '#000000',
+	gray: '#333333',
 	red: '#ff0086',
 	blue: '#00fff8',
 	yellow: '#f9ff00',
@@ -202,7 +203,7 @@ var selectedProvince = '';
 
 // variables for all the graphs
 
-var margin = { top: 10, right: 120, bottom: 20, left: 80 };
+var margin = { top: 25, right: 120, bottom: 25, left: 80 };
 var sw = +d3.select('#graph_01').style("width").slice(0,-2) - margin.left - margin.right;
 var sh = +d3.select('#graph_01').style("height").slice(0,-2) - margin.top - margin.bottom;
 
@@ -224,15 +225,21 @@ var svg1 = d3.select('#graph_01')
 
 var g1 = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-g1.append("g")
-	.attr("transform", "translate(0," + y(0) + ")")
-	.call(d3.axisBottom(x));
+let axisBottom1 = g1.append("g")
+	.attr("transform", "translate(0," + y(0) + ")");
+axisBottom1.call(d3.axisBottom(x).tickSize(-sh).tickPadding(8));
+axisBottom1.select(".domain").remove();
+axisBottom1.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2").attr("transform", "translate(0, 6)");
 
 let axisRight1 = g1.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
-axisRight1.call(d3.axisRight(y).tickSize(-sw).tickPadding(14));
+axisRight1.call(d3.axisRight(y).ticks(5).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+	  return d > 0 ? "+ " + d + " giorni" : d + " giorni";
+    }));
 axisRight1.select(".domain").remove();
+axisRight1.selectAll(".tick text").attr("dy", "0em").style("fill", graphVars.gray);
 axisRight1.selectAll(".tick:not(:first-of-type) line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2");
+axisRight1.selectAll(".tick line").attr("transform", "translate(6, 0)");
 
 var paths_g1 = g1.append('g');
 
@@ -313,6 +320,8 @@ function updateLayers(_x, _y, _showPanel) {
 
 			selectedProvince = newprov.properties.DEN_CMPRO;
 
+			d3.selectAll('.graph-rect').remove();
+
 			//title
 			d3.select('#nomeprovincia').html('Provincia di ' + selectedProvince);
 
@@ -332,6 +341,21 @@ function updateLayers(_x, _y, _showPanel) {
 				.merge(paths1)
 				.transition()
 				.attr("d", function(d){return area(d.values)});
+
+			axisBottom1.selectAll('.tick text').style('fill',function(d){
+				return d == status.years ? graphVars.black : graphVars.gray;
+			}).style('font-weight',function(d){
+				return d == status.years ? "bold" : "normal";
+			})
+
+			g1.append("rect")
+				.classed("graph-rect", true)
+				.attr("rx", 4)
+				.attr("ry", 4)
+				.attr("x", x(status.years) - 30)
+				.attr("y", y(90))
+				.attr("width", 60)
+				.attr("height", y(0) + 20)
 
 			//first text
 			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
@@ -355,6 +379,15 @@ function updateLayers(_x, _y, _showPanel) {
 				.transition()
 				.attr("d", function(d){return area(d.values)});
 
+			g2.append("rect")
+				.classed("graph-rect", true)
+				.attr("rx", 4)
+				.attr("ry", 4)
+				.attr("x", x(status.years) - 30)
+				.attr("y", y(90))
+				.attr("width", 60)
+				.attr("height", y(0) + 20)
+
 			//second text
 			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
 			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
@@ -376,6 +409,15 @@ function updateLayers(_x, _y, _showPanel) {
 				.merge(paths3)
 				.transition()
 				.attr("d", function(d){return area3(d.values)});
+
+			g3.append("rect")
+				.classed("graph-rect", true)
+				.attr("rx", 4)
+				.attr("ry", 4)
+				.attr("x", x(status.years) - 30)
+				.attr("y", y3(0) - 20)
+				.attr("width", 60)
+				.attr("height", y3(-410) + 20)
 
 			//third text
 			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
