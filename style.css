@@ -1,7 +1,14 @@
+:root {
+	--yellow: #f9ff00;
+	--blue: #00fff8;
+	--red: #ff0086;
+}
+
+
 html,
 body {
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 }
 
 #container {
@@ -10,14 +17,13 @@ body {
 	/*border: 1px dashed;*/
 	background-image: url("./assets/sfondo.jpg");
 	background-size: 100%;
-
 }
 
 #left-panel {
 	width: 380px;
 	float: left;
-    margin-top:35px;
-	margin-left:35px;
+	margin-top: 35px;
+	margin-left: 35px;
 }
 
 .intro {
@@ -33,17 +39,15 @@ body {
 }
 
 .scrittaMagenta {
-/*	color: magenta;*/
-    color: #ff0086;
-	
+	color: var(--red);
 }
 
 .scrittaCyan {
-	color: cyan;
+	color: var(--blue);
 }
 
 .scrittaYellow {
-	color: yellow;
+	color: var(--yellow);
 }
 
 .subtitle {
@@ -59,86 +63,63 @@ body {
 	width: 210px;
 	margin-left: 50px;
 	margin-top: 15px
-
 }
 
 .riq {
-/*	outline: 1px solid;*/
+	/*	outline: 1px solid;*/
 	height: 320px;
 	width: 320px;
-	margin-top:10px;
+	margin-top: 10px;
 }
 
-#toggle-1{
-/*	outline-color: #ff0086;*/
+#toggle-1 {
 	outline-color: #d8d8d8;
 	margin-top: 15px;
 	height: 210px;
 	width: 210px;
 	background-image: url("./assets/bottone1.jpg");
 	background-size: 100%;
-/*	background-color: magenta;*/
 }
 
 #toggle-1.selected {
-	outline-color: #ff0086;
-	outline-width:8px;
+	outline-color: var(--red);
+	outline-width: 8px;
 	margin-top: 15px;
 	background-image: url("./assets/bottone1clicked.jpg");
 	background-size: 100%;
-	background-color: green;
+	background-color: var(--red);
 }
-
-#clicked {
-/*	outline-color: #ff0086;*/
-	outline-color: #d8d8d8;
-	margin-top: 15px;
-	height: 210px;
-	width: 210px;
-/*	background-image: url("./assets/bottone1.jpg");*/
-	background-size: 100%;
-	background-color: magenta;
-}
-
-
-/*
-img{
-    height: 900px;
-	background: lightgray;
-}
-*/
 
 #toggle-2 {
 	outline-color: #d8d8d8;
-	outline-width:2px;
+	outline-width: 2px;
 	margin-top: 15px;
-	background-image: url("./assets/bottone2.jpg");
+	background-image: url("./assets/bottone3.jpg");
 	background-size: 100%;
-	background-color: yellow;
+	background-color: var(--blue);
 }
 
 #toggle-2.selected {
-	outline-color: yellow;
-	outline-width:8px;
+	outline-color: var(--blue);
+	outline-width: 8px;
 	margin-top: 15px;
-	background-image: url("./assets/bottone2clicked.jpg");
+	background-image: url("./assets/bottone3clicked.jpg");
 	background-size: 100%;
 }
 
 #toggle-3 {
-/*	outline-color: cyan;*/
 	outline-color: #d8d8d8;
 	margin-top: 15px;
-	background-image: url("./assets/bottone3.jpg");
+	background-image: url("./assets/bottone2.jpg");
 	background-size: 100%;
-	background-color: cyan;
+	background-color: var(--yellow);
 }
 
 #toggle-3.selected {
-	outline-color: cyan;
-	outline-width:8px;
+	outline-color: var(--yellow);
+	outline-width: 8px;
 	margin-top: 15px;
-	background-image: url("./assets/bottone3clicked.jpg");
+	background-image: url("./assets/bottone2clicked.jpg");
 	background-size: 100%;
 }
 
@@ -157,21 +138,19 @@ img{
 #visualization {
 	width: 960px;
 	height: 100%;
-/*	outline: 1px dashed #000;*/
 	outline-offset: -1px;
 	margin-left: 40px;
 	float: left;
-/*	background: blue;*/
 }
 
-#mapZero {
+
+/*#mapZero {
 	height: 960px;
 	width: 960px;
-/*	background-color: darkgray;*/
 	margin-top:15px;
 	background-image: url("./assets/contorni.png");
 	background-size: 100%;
-/*	background-color: red;*/
+	background-color: red;
 }
 
 #mappa1 {
@@ -196,14 +175,11 @@ img{
 	margin-top:15px;
 	background-image: url("./assets/mappa3.png");
 	background-size: 100%;
-}
-
-
+}*/
 
 #timeline {
 	height: 90px;
-	margin-left:200px;
-
+	margin-left: 200px;
 }
 
 .line {
@@ -211,59 +187,65 @@ img{
 	width: 850px;
 }
 
+
 /*linea del tempo*/
-   
-      .cls-1 {
-        fill: #fff;
-      }
 
-      .cls-2, .cls-7 {
-        fill: none;
-        stroke-miterlimit: 10;
-      }
+.cls-1 {
+	fill: #fff;
+}
 
-      .cls-2 {
-        stroke: #d8d8d8;
-        stroke-linecap: round;
-        stroke-width: 4px;
-      }
+.cls-2,
+.cls-7 {
+	fill: none;
+	stroke-miterlimit: 10;
+}
 
-      .cls-3, .cls-5, .cls-6 {
-        fill: #454545;
-      }
+.cls-2 {
+	stroke: #d8d8d8;
+	stroke-linecap: round;
+	stroke-width: 4px;
+}
 
-      .cls-4 {
-        font-size: 5.16px;
-        fill: #d8d8d8;
-      }
+.cls-3,
+.cls-5,
+.cls-6 {
+	fill: #454545;
+}
 
-      .cls-4, .cls-5 {
-        font-family: Work Sans;
-      }
+.cls-4 {
+	font-size: 5.16px;
+	fill: #d8d8d8;
+}
 
-      .cls-5 {
-        font-size: 6.89px;
-      }
+.cls-4,
+.cls-5 {
+	font-family: Work Sans;
+}
 
-      .cls-6 {
-        opacity: 0.2;
-      }
+.cls-5 {
+	font-size: 6.89px;
+}
 
-      .cls-7 {
-        stroke: #454545;
-      }
+.cls-6 {
+	opacity: 0.2;
+}
 
-    
-     
+.cls-7 {
+	stroke: #454545;
+}
+
+
+
 
 .right-panel {
 	height: 100%;
-/*	outline: 1px dashed #000;*/
+	/*	outline: 1px dashed #000;*/
 	outline-offset: -1px;
 	float: right;
 	margin-right: 70px;
-/*	background: yellow;*/
+	/*	background: yellow;*/
 }
+
 
 /*
 .rightRiq {
@@ -279,7 +261,7 @@ img{
 .biancoDestra {
 	width: 390px;
 	height: 880px;
-    outline: 2px solid #d8d8d8;
+	outline: 2px solid #d8d8d8;
 	background: white;
 	margin-top: 100px;
 	position: relative;
@@ -292,8 +274,7 @@ img{
 	line-height: 30px;
 	margin-left: 30px;
 	padding-top: 25px;
-/*	text-align: justify;*/
-
+	/*	text-align: justify;*/
 }
 
 .testo2 {
@@ -302,9 +283,7 @@ img{
 	font-size: 13px;
 	line-height: 25px;
 	margin-left: 30px;
-
-/*	text-align: justify;*/
-
+	/*	text-align: justify;*/
 }
 
 .testoSotto {
@@ -314,9 +293,7 @@ img{
 	line-height: 17px;
 	margin-left: 0px;
 	margin-top: 15px;
-
-/*	text-align: justify;*/
-
+	/*	text-align: justify;*/
 }
 
 .timeline_button {
@@ -355,5 +332,4 @@ p#nomeprovincia {
 	font-family: Work Sans;
 	font-size: 15px;
 	text-transform: uppercase;
-
 }
