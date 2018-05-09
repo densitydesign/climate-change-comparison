@@ -6,6 +6,24 @@
 	--darkGrey: #454545;
 }
 
+#background_map {
+	fill: white;
+	stroke: var(--lightGrey);
+}
+
+.provincia {
+	fill: white;
+	stroke: var(--lightGrey);
+}
+
+.selected {
+	stroke: black;
+}
+
+#TX30_RCP85 {
+	fill: var(--red);
+}
+
 
 html,
 body {
