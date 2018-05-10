@@ -50,9 +50,9 @@ let w, h;
 //drawing variables
 
 let canvas;
-let l1, l2, l3,
-	l1_45, l2_45, l3_45,
-	prov_layer, italy_layer
+let RCP85_layer, RCP45_layer,
+	prov_layer, italy_layer,
+	imagesLayers
 
 //lens variables
 let lens_size = 200;
@@ -66,7 +66,16 @@ function preload() {
 	province = loadJSON('assets/contorniProvince.json');
 	italy_bg = loadImage('assets/italy_bg.png');
 	confini = loadJSON('assets/contorni_italia.json');
-
+	imagesLayers = {}
+	//load all the images
+	let ya = ["2011-2040", "2041-2070", "2071-2100"].forEach(function(y){
+		["TX30", "PR95PERC", "PRCPTOT"].forEach(function(s){
+			["RCP45", "RCP85"].forEach(function(p){
+				var name = y+"-"+s+"-"+p;
+				imagesLayers[name] = loadImage('assets/layers/' + name + '.png');
+			})
+		})
+	})
 	//load and parse data for single provinces
 	d3.tsv("assets/climate-change-provincie.tsv").then(function(data) {
 
@@ -92,6 +101,15 @@ function setup() {
 	w = 960;
 	h = 960;
 
+	RCP85_layer = createGraphics(w,h);
+	RCP45_layer = createGraphics(w,h);
+
+	RCP85_layer.parent('map')
+	RCP85_layer.id('RCP85_layer')
+
+	RCP45_layer.parent('map')
+	RCP45_layer.id('RCP45_layer')
+
 	canvas = createCanvas(w, h);
 	pixelDensity(1);
 
@@ -103,12 +121,12 @@ function setup() {
 	initializeButton('#toggle-3', 'show_PRCPTOT');
 
 	//initialize map
-	l1 = new GeoLayer(fullData.values, 74, myMap, w, h);
-	l1_45 = new GeoLayer(fullData.values, 74, myMap, w, h);
-	l2 = new GeoLayer(fullData.values, 88, myMap, w, h);
-	l2_45 = new GeoLayer(fullData.values, 88, myMap, w, h);
-	l3 = new GeoLayer(fullData.values, -410, myMap, w, h);
-	l3_45 = new GeoLayer(fullData.values, -410, myMap, w, h);
+	// l1 = new GeoLayer(fullData.values, 74, myMap, w, h);
+	// l1_45 = new GeoLayer(fullData.values, 74, myMap, w, h);
+	// l2 = new GeoLayer(fullData.values, 88, myMap, w, h);
+	// l2_45 = new GeoLayer(fullData.values, 88, myMap, w, h);
+	// l3 = new GeoLayer(fullData.values, -410, myMap, w, h);
+	// l3_45 = new GeoLayer(fullData.values, -410, myMap, w, h);
 	prov_layer = new ShapeFileLayer(province, myMap, w, h);
 	italy_layer = new ShapeFileLayer(confini, myMap, w, h);
 
@@ -140,7 +158,7 @@ d3.selectAll('.timeline_button')
 	});
 
 
-// this function allows you to bind a DIV item to the status of a variable
+//this function allows you to bind a DIV item to the status of a variable
 function initializeButton(_btn_selector, _target_variable) {
 	var button = select(_btn_selector);
 	button.selected = false;
@@ -168,31 +186,6 @@ function initMap(_years) {
 	console.log('initialize', _years);
 	clear();
 
-	l1.color = graphVars.red;
-	l1.init(_years, 'TX30', 'RCP85');
-	l1.draw();
-
-	l1_45.color = graphVars.red;
-	l1_45.init(_years, 'TX30', 'RCP45');
-	l1_45.draw();
-
-	l2.color = graphVars.blue;
-	l2.init(_years, 'PR95PERC', 'RCP85');
-	l2.draw();
-
-	l2_45.color = graphVars.blue;
-	l2_45.init(_years, 'PR95PERC', 'RCP45');
-	l2_45.draw();
-
-	l3.color = graphVars.yellow;
-	l3.init(_years, 'PRCPTOT', 'RCP85');
-	l3.draw();
-
-
-	l3_45.color = graphVars.yellow;
-	l3_45.init(_years, 'PRCPTOT', 'RCP45');
-	l3_45.draw();
-
 	prov_layer.draw();
 	italy_layer.draw();
 
@@ -204,8 +197,8 @@ var selectedProvince = '';
 // variables for all the graphs
 
 var margin = { top: 25, right: 120, bottom: 25, left: 80 };
-var sw = +d3.select('#graph_01').style("width").slice(0,-2) - margin.left - margin.right;
-var sh = +d3.select('#graph_01').style("height").slice(0,-2) - margin.top - margin.bottom;
+var sw = +d3.select('#graph_01').style("width").slice(0, -2) - margin.left - margin.right;
+var sh = +d3.select('#graph_01').style("height").slice(0, -2) - margin.top - margin.bottom;
 
 var x = d3.scaleOrdinal()
 	.domain(["2011-2040", "2041-2070", "2071-2100"])
@@ -234,8 +227,8 @@ axisBottom1.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("st
 let axisRight1 = g1.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
 axisRight1.call(d3.axisRight(y).ticks(5).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
-	  return d > 0 ? "+ " + d + " giorni" : d + " giorni";
-    }));
+	return d > 0 ? "+ " + d + " giorni" : d + " giorni";
+}));
 axisRight1.select(".domain").remove();
 axisRight1.selectAll(".tick text").attr("dy", "0em").style("fill", graphVars.gray);
 axisRight1.selectAll(".tick:not(:first-of-type) line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2");
@@ -284,30 +277,30 @@ g3.append("g")
 
 function updateLayers(_x, _y, _showPanel) {
 	clear();
-	image(italy_layer.image,0,0,w,h);
+	
+
+	RCP85_layer.clear();
+	RCP45_layer.clear();
 
 	blendMode(MULTIPLY);
-	if (status.show_TX30) {
-		l1_45.invertMask(_x, _y, lens_size);
-		l1.mask(_x, _y, lens_size);
-		d3.select('#graph_01_container').style("display", "inline");
-	} else {
-		d3.select('#graph_01_container').style("display", "none");
+
+	if(status.show_TX30) {
+		console.log(imagesLayers[status.years+"-TX30-RCP85"])
+		image(imagesLayers[status.years+"-TX30-RCP85"],0,0,w,h);
+		RCP45_layer.image(imagesLayers[status.years+"-TX30-RCP45"],0,0,w,h);
 	}
-	if (status.show_PRCPTOT) {
-		l3.mask(_x, _y, lens_size)
-		l3_45.invertMask(_x, _y, lens_size);
-		d3.select('#graph_03_container').style("display", "inline");
-	} else {
-		d3.select('#graph_03_container').style("display", "none");
+	if(status.show_PR95PERC) {
+		image(imagesLayers[status.years+"-PR95PERC-RCP85"],0,0,w,h);
+		RCP45_layer.image(imagesLayers[status.years+"-PR95PERC-RCP45"],0,0,w,h);
 	}
-	if (status.show_PR95PERC) {
-		l2_45.invertMask(_x, _y, lens_size);
-		l2.mask(_x, _y, lens_size);
-		d3.select('#graph_02_container').style("display", "inline");
-	} else {
-		d3.select('#graph_02_container').style("display", "none");
+	if(status.show_PRCPTOT) {
+		image(imagesLayers[status.years+"-PRCPTOT-RCP85"],0,0,w,h);
+		RCP45_layer.image(imagesLayers[status.years+"-PRCPTOT-RCP45"],0,0,w,h);
 	}
+	console.log(RCP45_layer)
+	//image(italy_layer.image, 0, 0, w, h);
+	//image(RCP85_layer,0,0,w,h)
+
 
 	if (_showPanel && !(!status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT)) {
 		var newprov = prov_layer.mask(_x, _y, lens_size);
@@ -327,7 +320,7 @@ function updateLayers(_x, _y, _showPanel) {
 
 			//first graph
 			var TX30_data = d3.nest()
-				.key(function(e){ return e.proiezione})
+				.key(function(e) { return e.proiezione })
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['TX30']);
 
@@ -336,15 +329,15 @@ function updateLayers(_x, _y, _showPanel) {
 
 			paths1.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.lightGray;})
-				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.red : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths1)
 				.transition()
-				.attr("d", function(d){return area(d.values)});
+				.attr("d", function(d) { return area(d.values) });
 
-			axisBottom1.selectAll('.tick text').style('fill',function(d){
+			axisBottom1.selectAll('.tick text').style('fill', function(d) {
 				return d == status.years ? graphVars.black : graphVars.gray;
-			}).style('font-weight',function(d){
+			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
 			})
 
@@ -358,13 +351,13 @@ function updateLayers(_x, _y, _showPanel) {
 				.attr("height", y(0) + 20)
 
 			//first text
-			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) +'.').style('opacity', 1);
+			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) + '.').style('opacity', 1);
 
 			//second graph
 			var PR95PERC_data = d3.nest()
-				.key(function(e){ return e.proiezione})
+				.key(function(e) { return e.proiezione })
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['PR95PERC']);
 
@@ -373,11 +366,11 @@ function updateLayers(_x, _y, _showPanel) {
 
 			paths2.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.lightGray;})
-				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.blue : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths2)
 				.transition()
-				.attr("d", function(d){return area(d.values)});
+				.attr("d", function(d) { return area(d.values) });
 
 			g2.append("rect")
 				.classed("graph-rect", true)
@@ -389,13 +382,13 @@ function updateLayers(_x, _y, _showPanel) {
 				.attr("height", y(0) + 20)
 
 			//second text
-			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').style('opacity', 1);
 
 			//third graph
 			var PRCPTOT_data = d3.nest()
-				.key(function(e){ return e.proiezione})
+				.key(function(e) { return e.proiezione })
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['PRCPTOT']);
 
@@ -404,11 +397,11 @@ function updateLayers(_x, _y, _showPanel) {
 
 			paths3.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.lightGray;})
-				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.yellow : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths3)
 				.transition()
-				.attr("d", function(d){return area3(d.values)});
+				.attr("d", function(d) { return area3(d.values) });
 
 			g3.append("rect")
 				.classed("graph-rect", true)
@@ -420,8 +413,8 @@ function updateLayers(_x, _y, _showPanel) {
 				.attr("height", y3(-410) + 20)
 
 			//third text
-			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').style('opacity', 1);
 
 			d3.select('#spiega').style("opacity", 1e-6);
@@ -434,110 +427,6 @@ function updateLayers(_x, _y, _showPanel) {
 	}
 
 
-}
-
-function GeoLayer(_data, _maxval, _map, _width, _height) {
-	//
-	this.color = '#ff0000';
-	this.maxVal = _maxval;
-	this.width = _width;
-	this.height = _height;
-
-	var points = [];
-	var layer = createGraphics(this.width, this.height);
-	this.rendered = createImage(this.width, this.height);
-
-	// prepare data
-	this.init = function(_year, _variable, _scenario) {
-		//flush points
-		points = [];
-		// test un po' stupidino
-		var p1 = myMap.latLngToPixel(_data[0].lat, _data[0].lon);
-		var p2 = myMap.latLngToPixel(_data[1].lat, _data[1].lon);
-		var distance = (p1.x - p2.x) / 5.55; //formula magica, ottini distanza tra punti
-
-		var maxVal = Math.sqrt(Math.abs(this.maxVal));
-
-		_data.forEach(function(item) {
-
-			const latitude = item.lat;
-			const longitude = item.lon;
-
-			// Transform lat/lng to pixel position
-			const pos = _map.latLngToPixel(latitude, longitude);
-
-			// Get the variables
-			let size = Math.sqrt(Math.abs(item[_year][_variable][_scenario]));
-
-			size = map(size, 0, maxVal, 0, distance);
-
-			//save the point
-			var p = {
-				'x': pos.x,
-				'y': pos.y,
-				'size': size
-			};
-			//add a second size if scenario is RCP45
-			if (_scenario == 'RCP45') {
-				p.outsize = map(Math.sqrt(Math.abs(item[_year][_variable]['RCP85'])), 0, maxVal, 0, distance);
-				p.innersize = map(Math.sqrt(Math.abs(item[_year][_variable]['RCP85'] - item[_year][_variable]['RCP45'])), 0, maxVal, 0, distance);
-			}
-			points.push(p);
-		})
-	}
-	this.draw = function() {
-		layer.clear();
-		//layer.background('white');
-		layer.noStroke();
-		layer.ellipseMode(CENTER);
-		layer.fill(this.color);
-		var c = this.color;
-		points.forEach(function(p) {
-			if(p.outsize != null){
-				layer.fill(c);
-				layer.ellipse(p.x, p.y, p.innersize);
-				// layer.fill(graphVars.lightGray);
-				// layer.ellipse(p.x, p.y, p.size);
-			} else {
-			layer.ellipse(p.x, p.y, p.size, p.size);
-			}
-		});
-
-		this.rendered = createImage(this.width, this.height);
-
-		this.rendered.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
-
-		return this.rendered;
-	}
-
-	this.mask = function(_mx, _my, _msize) {
-		layer.clear();
-		var outimg = createImage(this.width, this.height);
-		layer.image(this.rendered, 0, 0);
-		layer.ellipseMode(CENTER);
-		layer.noStroke();
-		layer.fill(255);
-		layer.ellipse(_mx, _my, _msize);
-		outimg.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
-
-		image(outimg, 0, 0);
-
-		return outimg;
-	}
-	this.invertMask = function(_mx, _my, _msize) {
-		var outimg = createImage(_msize, _msize);
-		outimg.copy(this.rendered, _mx - _msize / 2, _my - _msize / 2, _msize, _msize, 0, 0, _msize, _msize)
-
-		var tempMask = createGraphics(_msize, _msize);
-		tempMask.ellipseMode(CENTER);
-		tempMask.ellipse(_msize / 2, _msize / 2, _msize);
-		outimg.mask(tempMask);
-		tempMask.remove();
-
-		image(outimg, _mx - _msize / 2, _my - _msize / 2);
-
-		return outimg;
-	}
 }
 
 function ShapeFileLayer(_geoJson, _map, _width, _height) {
