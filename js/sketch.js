@@ -132,9 +132,9 @@ Promise.all(promises).then(function(data) {
 	// .on("touchmove", function(d) { d3.select(this).classed("selected", true) })
 	// .on("touchend", function(d) { d3.select(this).classed("selected", false) });
 
-	var rscale = d3.scaleSqrt()
-		.domain([0, 88])
-		.range([0, 3]);
+	// var rscale = d3.scaleSqrt()
+	// 	.domain([0, 88])
+	// 	.range([0, 3]);
 
 	// layers.TX30_85 = svg.append('g')
 	// 	.attr('id','TX30_85')
