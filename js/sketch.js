@@ -9,8 +9,8 @@ var colors = {
 	mapFill: '#fff'
 }
 
-var width = 960;
-var height = 960;
+var width = 960*2;
+var height = 960*2;
 
 var svg = d3.select("#map")
 	.append("svg")
@@ -28,7 +28,7 @@ var layers = {
 
 //prepare mask
 var myTouches;
-var radius = 400;
+var radius = 100;
 
 var defs = svg.append('defs');
 
@@ -44,6 +44,13 @@ holeMask.append('rect')
 	.attr('fill', 'black');
 
 var holeMaskCircles = holeMask.selectAll('.hole-mask-circles');
+
+var baseLayer = svg.append('g')
+	.classed('base-layer', true);
+
+var maskedLayer = svg.append('g')
+	.classed('masked-layer', true)
+	.attr('mask', 'url(#hole-mask)');
 
 svg.on('touchstart', function(d) {
 		d3.event.preventDefault();
@@ -62,8 +69,7 @@ svg.on('touchstart', function(d) {
 	})
 
 function onStart() {
-	console.log('onStart')
-	holeMaskCircles = holeMaskCircles.data([myTouches[0]], function(d) { console.log(d); return d.identifier; })
+	holeMaskCircles = holeMaskCircles.data([myTouches[0]], function(d) { return d.identifier; })
 	holeMaskCircles.exit().remove();
 	holeMaskCircles = holeMaskCircles.enter().append('circle')
 		.attr('class', 'hole-mask-circles')
@@ -108,11 +114,11 @@ Promise.all(promises).then(function(data) {
 	var path = d3.geoPath()
 		.projection(projection);
 
-	svg.append("path")
+	baseLayer.append("path")
 		.attr("d", path(data[0]))
 		.attr("id", "background_map")
 
-	var g = svg.append("g")
+	var g = baseLayer.append("g")
 		.attr('mask', 'url(#hole-mask)');
 
 	g.selectAll("path")
@@ -122,9 +128,9 @@ Promise.all(promises).then(function(data) {
 		.attr("d", path)
 		.attr("class", "provincia")
 		.attr("id", function(d) { return d.properties.name; })
-		.on("touchstart", function(d) { d3.select(this).classed("selected", true) })
-		.on("touchmove", function(d) { d3.select(this).classed("selected", true) })
-		.on("touchend", function(d) { d3.select(this).classed("selected", false) });
+	// .on("touchstart", function(d) { d3.select(this).classed("selected", true) })
+	// .on("touchmove", function(d) { d3.select(this).classed("selected", true) })
+	// .on("touchend", function(d) { d3.select(this).classed("selected", false) });
 
 	var rscale = d3.scaleSqrt()
 		.domain([0, 88])
@@ -140,12 +146,34 @@ Promise.all(promises).then(function(data) {
 	// 	.attr("r", function(d){ return rscale(d['2071-2100']['TX30']['RCP85']) })
 	// 	.attr("fill", "red");
 
-	layers.TX30_85 = initializeLayer(svg, data[2], '2071-2100', 'TX30', 'RCP85', 88);
-	layers.TX30_85.attr('mask', 'url(#hole-mask)');
+	// layers.TX30_85 = initializeLayer(svg, data[2], '2071-2100', 'TX30', 'RCP85', 74, '#ff0086');
+	// layers.TX30_852 = initializeLayer(svg, data[2], '2071-2100', 'PRCPTOT', 'RCP85', -410, '#00fff8');
+	// layers.TX30_853 = initializeLayer(svg, data[2], '2071-2100', 'PR95PERC', 'RCP85', 88, '#f9ff00');
 	// layers.TX30_45 = initializeLayer(svg, data[2], '2071-2100', 'TX30', 'RCP45', 88);
+
+	maskedLayer.append("svg:image")
+		.attr('x', 0)
+		.attr('y', 0)
+		.attr('width', width)
+		.attr('height', height)
+		.attr("xlink:href", "assets/layerz/rosa.png")
+
+	maskedLayer.append("svg:image")
+		.attr('x', 0)
+		.attr('y', 0)
+		.attr('width', width)
+		.attr('height', height)
+		.attr("xlink:href", "assets/layerz/blue.png")
+
+	maskedLayer.append("svg:image")
+		.attr('x', 0)
+		.attr('y', 0)
+		.attr('width', width)
+		.attr('height', height)
+		.attr("xlink:href", "assets/layerz/yellove.png")
 })
 
-function initializeLayer(_svg, _data, _year, _variable, _scenario, _maxVal) {
+function initializeLayer(_svg, _data, _year, _variable, _scenario, _maxVal, _color) {
 
 	console.log(_data);
 
@@ -158,9 +186,19 @@ function initializeLayer(_svg, _data, _year, _variable, _scenario, _maxVal) {
 		.selectAll("circle")
 		.data(_data.values).enter()
 		.append("circle")
+		.attr("fill", _color)
 		.attr("cx", function(d) { return projection([d.lon, d.lat])[0]; })
 		.attr("cy", function(d) { return projection([d.lon, d.lat])[1]; })
-		.attr("r", function(d) { return rscale(d[_year][_variable][_scenario]) });
+		.attr("r", function(d) { 
+			if(rscale(d[_year][_variable][_scenario]) > 0) {
+				return rscale(d[_year][_variable][_scenario])
+			} else {
+				return 0;
+			}
+		 })
+	// .attr('mask', 'url(#hole-mask)');
+
+	console.log(result.size())
 
 	return result;
 }
