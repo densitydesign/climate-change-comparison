@@ -1,36 +1,141 @@
-html, body, canvas {
-  margin: 0;
-  padding: 0;
+:root {
+	--yellow: #f9ff00;
+	--blue: #00fff8;
+	--red: #ff0086;
+	--lightGrey: #d8d8d8;
+	--darkGrey: #454545;
+	--black: #000000;
+}
+
+
+html,
+body {
+	margin: 0;
+	padding: 0;
 }
 
 #container {
 	width: 1920px;
 	height: 1080px;
-	background-color: #cccccc;
+	/*border: 1px dashed;*/
+	background-image: url("./assets/sfondo.jpg");
+	background-size: 100%;
 }
 
 #left-panel {
-	height:100%;
-	width: 300px;
-	float:left;
+	width: 380px;
+	float: left;
+	margin-top: 35px;
+	margin-left: 35px;
 }
 
+.intro {
+	height: 30px;
+	font-family: Work Sans;
+	width: 300px;
+}
+
+.title {
+	font-family: Work Sans;
+	font-size: 30px;
+	margin-top: 5px;
+}
+
+.scrittaMagenta {
+	color: var(--red);
+}
+
+.scrittaCyan {
+	color: var(--blue);
+}
+
+.scrittaYellow {
+	color: var(--yellow);
+}
+
+.subtitle {
+	font-family: Work Sans;
+	color: black;
+	font-size: 12px;
+}
+
+
 .left-toggle {
-	outline: 1px dashed #000;
-	outline-offset: -1px;
-	height: 360px;
+	outline: 2px solid;
+	height: 210px;
+	width: 210px;
+	margin-left: 50px;
+	margin-top: 15px
+}
+
+.riq {
+	/*	outline: 1px solid;*/
+	height: 320px;
+	width: 320px;
+	margin-top: 10px;
 }
 
 #toggle-1 {
-	outline-color: magenta;
+	outline-color: var(--lightGrey);
+	margin-top: 15px;
+	height: 210px;
+	width: 210px;
+	background-image: url("./assets/bottone1.jpg");
+	background-size: 100%;
+}
+
+#toggle-1.selected {
+	outline-color: var(--red);
+	outline-width: 8px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone1clicked.jpg");
+	background-size: 100%;
+	background-color: var(--red);
 }
 
 #toggle-2 {
-	outline-color: cyan;
+	outline-color: var(--lightGrey);
+	outline-width: 2px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone3.jpg");
+	background-size: 100%;
+	background-color: var(--blue);
+}
+
+#toggle-2.selected {
+	outline-color: var(--blue);
+	outline-width: 8px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone3clicked.jpg");
+	background-size: 100%;
 }
 
 #toggle-3 {
-	outline-color: yellow;
+	outline-color: var(--lightGrey);
+	margin-top: 15px;
+	background-image: url("./assets/bottone2.jpg");
+	background-size: 100%;
+	background-color: var(--yellow);
+}
+
+#toggle-3.selected {
+	outline-color: var(--yellow);
+	outline-width: 8px;
+	margin-top: 15px;
+	background-image: url("./assets/bottone2clicked.jpg");
+	background-size: 100%;
+}
+
+
+.legenda {
+	margin-top: 15px;
+	margin-left: 0px;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
 }
 
 .selected {
@@ -39,17 +144,185 @@ html, body, canvas {
 }
 
 #visualization {
-	width:1320px;
+	width: 960px;
 	height: 100%;
-	outline: 1px dashed #000;
 	outline-offset: -1px;
-	float:left;
+	margin-left: 40px;
+	float: left;
 }
 
-#right-panel {
-	width: 300px;
+
+/*#mapZero {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/contorni.png");
+	background-size: 100%;
+	background-color: red;
+}
+
+#mappa1 {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/mappa1.png");
+	background-size: 100%;
+}
+
+#mappa2 {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/mappa2.png");
+	background-size: 100%;
+}
+
+#mappa3 {
+	height: 960px;
+	width: 960px;
+	margin-top:15px;
+	background-image: url("./assets/mappa3.png");
+	background-size: 100%;
+}*/
+
+#timeline {
+	height: 90px;
+	margin-left: 200px;
+}
+
+.line {
+	height: 50px;
+	width: 850px;
+}
+
+
+/*linea del tempo*/
+
+.cls-1 {
+	fill: #fff;
+}
+
+.cls-2,
+.cls-7 {
+	fill: none;
+	stroke-miterlimit: 10;
+}
+
+.cls-2 {
+	stroke: var(--lightGrey);
+	stroke-linecap: round;
+	stroke-width: 4px;
+}
+
+.cls-3,
+.cls-5,
+.cls-6 {
+	fill: var(--darkGrey);
+}
+
+.cls-4 {
+	font-size: 5.16px;
+	fill: var(--lightGrey);
+}
+
+.cls-4,
+.cls-5 {
+	font-family: Work Sans;
+}
+
+.cls-5 {
+	font-size: 6.89px;
+}
+
+.cls-6 {
+	opacity: 0.2;
+}
+
+.cls-7 {
+	stroke: var(--darkGrey);
+}
+
+.right-panel {
 	height: 100%;
-	outline: 1px dashed #000;
 	outline-offset: -1px;
-	float:right;
+	float: right;
+	margin-right: 70px;
+}
+
+.biancoDestra {
+	width: 390px;
+	height: 880px;
+	outline: 2px solid var(--lightGrey);
+	background: white;
+	margin-top: 100px;
+	position: relative;
+}
+
+.testo {
+	width: 330px;
+	font-family: Work Sans;
+	font-size: 15px;
+	line-height: 30px;
+	margin-left: 30px;
+	padding-top: 25px;
+}
+
+.testo2 {
+	width: 330px;
+	font-family: Work Sans;
+	font-size: 13px;
+	line-height: 25px;
+	margin-left: 30px;
+}
+
+.testoSotto {
+	width: 390px;
+	font-family: Work Sans;
+	font-size: 7px;
+	line-height: 17px;
+	margin-left: 0px;
+	margin-top: 15px;
+}
+
+.timeline_button {
+	opacity: 0;
+}
+
+.timeline_button.selected {
+	opacity: 1;
+}
+
+#spiega {
+}
+
+#areachart {
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+}
+
+.graph {
+	width: 390px;
+	height: 180px;
+}
+
+#areachart p {
+	font-family: Work Sans;
+	font-size: 14px;
+	/*line-height: 30px;*/
+	margin: 0 15px 5px;
+}
+
+p#nomeprovincia {
+	font-family: Work Sans;
+	font-size: 15px;
+	text-transform: uppercase;
+	margin: 20px 15px 5px;
+}
+.graph-rect {
+	fill: none;
+	stroke: var(--black);
+	stroke-width: 2px;
 }
