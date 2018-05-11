@@ -32,80 +32,78 @@
 	<div id="container">
 		<!-- Top panel with timeline, buttons and graphs-->
 		<div id="top-panel">
-			<!-- Timeline -->
-			<h2 class="interaction-header">Seleziona il tempo:</h2>
-			<div id="timeline">
-				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="443px" height="60px" viewBox="0 0 443 60">
-					<g id="base">
-						<line style="fill:none;stroke:#D8D8D8;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10;" x1="10.1" y1="26" x2="431.9" y2="26" />
-					</g>
-					<g id="timeline_2071_2100" class="timeline_button">
-						<circle style="fill:#454545;" cx="372.8" cy="26.2" r="10" />
-						<text transform="matrix(1 0 0 1 342 58.72)">2071-2100</text>
-					</g>
-					<g id="timeline_2041_2070" class="timeline_button">
-						<circle style="fill:#454545;" cx="217.8" cy="26.2" r="10" />
-						<text transform="matrix(1 0 0 1 186 58.72)">2041-2070</text>
-					</g>
-					<g id="timeline_2011_2040" class="timeline_button selected">
-						<circle style="fill:#454545;" cx="68.8" cy="26.2" r="10" />
-						<text transform="matrix(1 0 0 1 40 58.72)">2011-2040</text>
-						<path d="M21.9,10.1H116c8.6,0,15.6,7,15.6,15.6l0,0c0,8.6-7,15.6-15.6,15.6H21.9c-8.6,0-15.6-7-15.6-15.6l0,0C6.3,17.1,13.3,10.1,21.9,10.1z" transform="translate(0,0)"/>
-					</g>
-				</svg>
-			</div>
+			<div class="bianco-container">
+				<!-- Timeline -->
+				<h2 class="interaction-header">Seleziona il tempo:</h2>
+				<div id="timeline">
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="443px" height="60px" viewBox="0 0 443 60">
+						<g id="base">
+							<line style="fill:none;stroke:#D8D8D8;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;" x1="10.1" y1="26" x2="431.9" y2="26" />
+						</g>
+						<g id="timeline_2071_2100" class="timeline_button">
+							<ellipse style="opacity:0;" cx="372.8" cy="26.2" rx="60" ry="25"/>
+							<circle cx="372.8" cy="26.2" r="5" />
+							<text transform="matrix(1 0 0 1 342 58.72)">2071-2100</text>
+						</g>
+						<g id="timeline_2041_2070" class="timeline_button">
+							<ellipse style="opacity:0;" cx="217.8" cy="26.2" rx="60" ry="25"/>
+							<circle cx="217.8" cy="26.2" r="5" />
+							<text transform="matrix(1 0 0 1 186 58.72)">2041-2070</text>
+						</g>
+						<g id="timeline_2011_2040" class="timeline_button selected">
+							<ellipse style="opacity:0;" cx="68.8" cy="26.2" rx="60" ry="25"/>
+							<circle cx="68.8" cy="26.2" r="10" />
+							<text transform="matrix(1 0 0 1 40 58.72)">2011-2040</text>
+							<path d="M21.9,10.1H116c8.6,0,15.6,7,15.6,15.6l0,0c0,8.6-7,15.6-15.6,15.6H21.9c-8.6,0-15.6-7-15.6-15.6l0,0C6.3,17.1,13.3,10.1,21.9,10.1z" transform="translate(0,0)"/>
+						</g>
+					</svg>
+				</div>
 
-			<!-- Buttons -->
-			<h2 class="interaction-header">Seleziona i livelli:</h2>
-			<div class="buttons-container">
-				<div class="riq" id="toggle-1">
-					<h1 class="title scrittaMagenta">Giorni molto caldi</h1>
-					<h4 class="subtitle">in più rispetto ad oggi</h4>
-					<!-- <div class="btn-toggle" id="toggle-1"></div> -->
-					<!-- <div class="legenda">
-						<h4 class="subtitle">+1 giorno</h4>
-						<img src="./assets/legenda1.jpg" height="16">
-						<h4 class="subtitle">+74 giorni</h4>
-					</div> -->
-				</div>
-				<div class="riq" id="toggle-2">
-					<h1 class="title scrittaCyan">Eventi estremi</h1>
-					<h4 class="subtitle">quantità di pioggia in più rispetto ad oggi</h4>
-					<!-- <div class="btn-toggle" id="toggle-2"></div> -->
-					<!-- <div class="legenda">
-						<h4 class="subtitle">+1 mm</h4>
-						<img src="./assets/legenda3.jpg" height="16">
-						<h4 class="subtitle">+87 mm</h4>
-					</div> -->
-				</div>
-				<div class="riq" id="toggle-3">
-					<h1 class="title scrittaYellow">Piogge estive</h1>
-					<h4 class="subtitle">differenza rispetto ad oggi</h4>
-					<!-- <div class="btn-toggle" id="toggle-3"></div> -->
-					<!-- <div class="legenda">
-						<h4 class="subtitle">-1 mm</h4>
-						<img src="./assets/legenda2.jpg" height="16">
-						<h4 class="subtitle">-410 mm</h4>
-					</div> -->
+				<!-- Buttons -->
+				<h2 class="interaction-header">Seleziona i livelli:</h2>
+				<div class="buttons-container">
+					<div class="riq">
+						<h1 class="title scrittaMagenta">Giorni molto caldi</h1>
+						<h4 class="subtitle">in più rispetto ad oggi</h4>
+						<div class="btn-toggle" id="toggle-1" data-variable="show_TX30">
+							<p class="btn-text">Mostra sulla mappa</p>
+						</div>
+					</div>
+					<div class="riq">
+						<h1 class="title scrittaCyan">Eventi estremi</h1>
+						<h4 class="subtitle">quantità di pioggia in più rispetto ad oggi</h4>
+						<div class="btn-toggle" id="toggle-2" data-variable="show_PR95PERC">
+							<p class="btn-text">Mostra sulla mappa</p>
+						</div>
+					</div>
+					<div class="riq">
+						<h1 class="title scrittaYellow">Piogge estive</h1>
+						<h4 class="subtitle">differenza rispetto ad oggi</h4>
+						<div class="btn-toggle" id="toggle-3" data-variable="show_PRCPTOT">
+							<p class="btn-text">Mostra sulla mappa</p>
+						</div>
+					</div>
 				</div>
 			</div>
 
 			<!-- Graphs -->
-			<h2 class="interaction-header" id='nomeprovincia'>NOME PROVINCIA</h2>
-			<div id='areachart'>
-				<div class='graph-container' id="graph_01_container">
-					<svg class='graph' id="graph_01"></svg>
-					<p id='desc_01'>Nel trentennio XXXX-XXXX, ci saranno circa <span class="scrittaMagenta">XX giorni di caldo intenso in più</span> rispetto ad oggi. Con l’adozione di politiche climatiche, il numero sarà circa di XX giorni.</p>
-				</div>
+			<div class="graphs-box">
+				<h2 class="interaction-header" id='nomeprovincia'>NOME PROVINCIA</h2>
+				<div id='areachart'>
+					<div class='graph-container' id="graph_01_container">
+						<svg class='graph' id="graph_01"></svg>
+						<p id='desc_01'>Nel trentennio XXXX-XXXX, ci saranno circa <span class="scrittaMagenta">XX giorni di caldo intenso in più</span> rispetto ad oggi. Con l’adozione di politiche climatiche, il numero sarà circa di XX giorni.</p>
+					</div>
 
-				<div class='graph-container' id="graph_02_container">
-					<svg class='graph' id="graph_02"></svg>
-					<p id='desc_02'>Nel trentennio XXXX-XXXX, nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">XX mm di pioggia in più</span> rispetto ad oggi. Con l’adozione di politiche climatiche, sarà circa XX mm.</p>
-				</div>
+					<div class='graph-container' id="graph_02_container">
+						<svg class='graph' id="graph_02"></svg>
+						<p id='desc_02'>Nel trentennio XXXX-XXXX, nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">XX mm di pioggia in più</span> rispetto ad oggi. Con l’adozione di politiche climatiche, sarà circa XX mm.</p>
+					</div>
 
-				<div class='graph-container' id="graph_03_container">
-					<svg class='graph' id="graph_03"></svg>
-					<p id='desc_03'>Nel trentennio XXXX-XXXX, nei mesi estivi scenderanno circa <span class="scrittaYellow">XX millimetri di acqua in meno</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà circa XX mm.</p>
+					<div class='graph-container' id="graph_03_container">
+						<svg class='graph' id="graph_03"></svg>
+						<p id='desc_03'>Nel trentennio XXXX-XXXX, nei mesi estivi scenderanno circa <span class="scrittaYellow">XX millimetri di acqua in meno</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà circa XX mm.</p>
+					</div>
 				</div>
 			</div>
 
@@ -121,6 +119,23 @@
 					<div id="canvas_map"></div>
 					<div id="svg_mask"></div>
 				</div>
+				<div class="legend-container">
+					<div class="legenda" data-variable="show_TX30">
+						<h4 class="subtitle">+1 giorno</h4>
+						<img src="./assets/legenda1.jpg" height="16">
+						<h4 class="subtitle">+74 giorni</h4>
+					</div>
+					<div class="legenda" data-variable="show_PR95PERC">
+						<h4 class="subtitle">+1 mm</h4>
+						<img style="position:relative; left:2.5px;" src="./assets/legenda3.jpg" height="16">
+						<h4 class="subtitle">+87 mm</h4>
+					</div>
+					<div class="legenda" data-variable="show_PRCPTOT">
+						<h4 class="subtitle">-1 mm</h4>
+						<img style="position:relative; left:5.5px;" src="./assets/legenda2.jpg" height="16">
+						<h4 class="subtitle">-410 mm</h4>
+					</div>
+				</div>
 			</div>
 		</div>
 		<!--		 Right visualization -->
@@ -133,23 +148,22 @@
 					<p>
 						Ogni livello rappresenta valori relativi a un differente indicatore climatico. La densità dei puntini mostra la quantità, per ogni componente, a cui sarà soggetta l’Italia nei prossimi 30, 60 e 90 anni. Le mappe sono sovrapponibili per permettere una visione completa della situazione climatica a cui sarà soggetto il nostro Paese nel futuro.
 					</p>
-					<p>
+					<p class="spacedTop">
 						<b> Cosa succederebbe se venissero attuate politiche climatiche? </b>
 					</p>
 					<p>
 						Toccando lo schermo è possibile esplorare la situazione che mostra la differenza con uno scenario nel quale si ipotizza siano adottate misure di mitigazione dei cambiamenti climatici.
 					</p>
-					<p class="scrittaMagenta">
-						Giorni molto caldi, indica il numero di giorni di caldo intenso in più che avremo nel futuro rispetto ad oggi.
+					<p class="spacedTop">
+						<span class="scrittaMagenta">Giorni molto caldi</span> indica il numero di giorni di caldo intenso in più che avremo nel futuro rispetto ad oggi.
 					</p>
-					<p class="scrittaYellow">
-						Eventi estremi mostra la differenza della quantità di pioggia che cadrà nei giorni di precipitazione intensa del futuro rispetto ad oggi.
+					<p class="spacedTop">
+						<span class="scrittaYellow">Eventi estremi</span> mostra la differenza della quantità di pioggia che cadrà nei giorni di precipitazione intensa del futuro rispetto ad oggi.
 					</p>
-					<p class="scrittaCyan">
-						Piogge estive riporta la differenza della quantità di pioggia che cadrà nel periodo estivo nel futuro rispetto ad oggi.
+					<p class="spacedTop">
+						<span class="scrittaCyan">Piogge estive</span> riporta la differenza della quantità di pioggia che cadrà nel periodo estivo nel futuro rispetto ad oggi.
 					</p>
 				</div>
-
 			</div>
 			<p class="testoSotto">
 				NB. I valori espressi negli scenari climatici sono stime soggette a diverse fonti di incertezza e pertanto vanno considerate come segnali di una tendenza generale e non come dati puntuali.

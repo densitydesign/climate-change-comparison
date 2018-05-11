@@ -5,6 +5,7 @@
 	--lightGrey: #d8d8d8;
 	--darkGrey: #454545;
 	--black: #000000;
+	--white: #ffffff;
 }
 
 
@@ -15,6 +16,7 @@ body {
     font-family: "Work Sans", sans-serif;
 	font-size: 14px;
 	color: var(--black);
+	z-index: -1;
 }
 
 h1, h2, h3, h4 {
@@ -24,7 +26,6 @@ h1, h2, h3, h4 {
 #container {
 	width: 1080px;
 	height: 1920px;
-	/*border: 1px dashed;*/
 	background-image: url("./assets/sfondo.jpg");
 	background-size: 100%;
 }
@@ -33,31 +34,32 @@ h1, h2, h3, h4 {
 
 #top-panel {
 	width: calc(100% - 70px);
-	padding: 0 35px 35px;
+	padding: 35px 35px 0;
 }
 
 .interaction-header {
 	text-transform: uppercase;
-	font-size: 1rem;
+	font-size: 1.1rem;
 	text-align: center;
 	margin: 0;
-	padding-top: 35px;
-}
-
-.buttons-container {
-    display: flex;
-	justify-content: space-between;
+	padding-top: 25px;
 }
 
 /* button styles */
+.buttons-container {
+    display: flex;
+	justify-content: space-around;
+	padding: 0 25px 25px;
+}
+
 .riq {
-	width: 255px;
 	margin-top: 10px;
+	text-align: center;
 }
 
 .title {
-	font-size: 2rem;
-	margin: 5px 0 2px;
+	font-size: 1.8rem;
+	margin: 0;
 }
 
 .scrittaMagenta {
@@ -73,18 +75,79 @@ h1, h2, h3, h4 {
 }
 
 .subtitle {
-	font-size: 0.9rem;
-	margin: 0;
+	font-size: 0.8rem;
+	margin: 0 0 5px;
 }
 
-/* .btn-toggle {
-	outline: 2px solid var(--lightGrey);
-	height: 100px;
-	width: 100px;
-	margin-top: 15px;
-	background-size: 100%;
+.btn-toggle {
+	width: 260px;
+	margin-top: 10px;
+	position: relative;
+	z-index: 1;
 }
-.btn-toggle.selected {
+
+.btn-toggle:before {
+	content: '';
+	border-radius: 4px;
+	border: 2px solid;
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	width: 100%;
+	height: 100%;
+	/* z-index: -1; */
+}
+
+.btn-toggle:after {
+	content: '';
+	background-color: var(--white);
+	border-radius: 1px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+	transform: scale(1);
+	transform-origin: center;
+	transition: all 0.5s ease;
+}
+
+.btn-toggle.selected:after {
+	transform: scale(0);
+}
+
+.title.scrittaMagenta ~ .btn-toggle {
+	background-color: var(--red);
+}
+
+.title.scrittaCyan ~ .btn-toggle {
+	background-color: var(--blue);
+}
+
+.title.scrittaYellow ~ .btn-toggle {
+	background-color: var(--yellow);
+}
+
+.title.scrittaMagenta ~ .btn-toggle:before {
+	border-color: var(--red);
+}
+
+.title.scrittaCyan ~ .btn-toggle:before {
+	border-color: var(--blue);
+}
+
+.title.scrittaYellow ~ .btn-toggle:before {
+	border-color: var(--yellow);
+}
+
+.btn-text {
+	color: var(--black);
+	font-size: 0.7rem;
+	margin: 0;
+	padding: 10px 0;
+}
+/* .btn-toggle.selected {
 	outline-width: 8px;
 }
 
@@ -115,21 +178,6 @@ h1, h2, h3, h4 {
 	background-image: url("./assets/bottone2clicked.jpg");
 } */
 
-.legenda {
-	margin-top: 15px;
-	display: flex;
-	justify-content: center;
-	width: 240px;
-}
-
-.legenda img {
-	margin: 0 6px;
-}
-
-/* .selected {
-	outline: 10px dashed #000;
-	outline-offset: -10px;
-} */
 
 /* timeline styles */
 #timeline {
@@ -139,20 +187,39 @@ h1, h2, h3, h4 {
 .timeline_button text {
 	font-size: 0.9rem;
 }
+.timeline_button circle {
+	fill: var(--lightGrey);
+}
+.timeline_button.selected circle {
+	fill: var(--darkGrey);
+}
 #timeline_2011_2040 path {
 	position: relative;
 	left: 0;
 	fill: none;
-	stroke: #454545;
-	stroke-width: 2px;
+	stroke: var(--darkGrey);
+	stroke-width: 1.5px;
 	stroke-miterlimit: 10;
 }
 
 /* GRAPHS STYLES */
+.graphs-box {
+	opacity: 0;
+}
+.graphs-box .interaction-header {
+	font-size: 1.6rem;
+	padding: 20px 0 5px;
+	margin: 0 22% 15px;
+	border-bottom: 1px solid var(--black);
+}
 
 #areachart {
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-around;
+}
+
+.graph-container {
+	width: 310px;
 }
 
 .graph {
@@ -161,14 +228,15 @@ h1, h2, h3, h4 {
 }
 
 #areachart p {
-	font-size: 0.9rem;
+	font-size: 0.8rem;
+	line-height: 1.3;
 	margin: 0 15px 0 20px;
 }
 
 .graph-rect {
 	fill: none;
 	stroke: var(--black);
-	stroke-width: 2px;
+	stroke-width: 1.5px;
 }
 
 /* MAP STYLES */
@@ -195,6 +263,26 @@ h1, h2, h3, h4 {
 	mix-blend-mode: multiply;
 }
 
+.legend-container {
+	position: absolute;
+	bottom: 14px;
+	left: 35px;
+}
+
+.legenda {
+	margin-top: 8px;
+	display: none;
+	width: 222px;
+}
+.legenda.shown {
+	display: flex;
+	justify-content: space-between;
+}
+
+.legenda img {
+	margin: 0 6px;
+}
+
 /* BOTTOM PANEL STYLES */
 .bianco-container {
 	outline: 2px solid var(--lightGrey);
@@ -207,13 +295,17 @@ h1, h2, h3, h4 {
 
 #spiega {
 	padding: 25px;
-	line-height: 1.7;
+	line-height: 1.6;
 	column-count: 2;
 }
 
 #spiega p {
-	margin: 0 0 5px;
+	margin: 0;
 }
+#spiega .spacedTop {
+	margin-top: 5px;
+}
+
 
 .testoSotto {
 	font-size: 0.7rem;

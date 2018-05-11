@@ -2,7 +2,7 @@ var myCanvas;
 
 //size
 let w = 960;
-let h = 960;
+let h = 995;
 
 //By default, none is visible.
 const status = {
@@ -29,9 +29,9 @@ const key = 'pk.eyJ1IjoibWlraW1hIiwiYSI6IjNvWUMwaUEifQ.Za_-O03W3UdQxZwS3bLxtg';
 
 // Options for map
 const options = {
-	lat: 42.1,
+	lat: 42,
 	lng: 12,
-	zoom: 5.57,
+	zoom: 5.61,
 	style: 'light-v9',
 	pitch: 0,
 	width: w,
@@ -62,8 +62,8 @@ let timeline_btns = [];
 
 //initialize svg
 svg = d3.select("#svg_mask").append("svg")
-	.attr("width", 960 + "px")
-	.attr("height", 960 + "px")
+	.attr("width", w + "px")
+	.attr("height", h + "px")
 	//.append("g")
 
 // var under = svg.append("g")
@@ -71,8 +71,8 @@ svg = d3.select("#svg_mask").append("svg")
 // var container = svg.append("g")
 
 var svg_overlay = d3.select("#svg_overlay").append("svg")
-	.attr("width", 960 + "px")
-	.attr("height", 960 + "px")
+	.attr("width", w + "px")
+	.attr("height", h + "px")
 
 var masked = svg.append("g")
 	.attr('mask', 'url(#hole-mask)');
@@ -80,8 +80,8 @@ var masked = svg.append("g")
 masked.append('rect')
 	.attr('x',0)
 	.attr('y',0)
-	.attr("width", 960 + "px")
-	.attr("height", 960 + "px")
+	.attr("width", w + "px")
+	.attr("height", h + "px")
 	.style("fill","white")
 
 // // add foreign object to svg
@@ -121,23 +121,29 @@ var overlayCircles = svg_overlay.selectAll('.overlay-circles');
 
 d3.select('#map').on('touchstart', function(d) {
 		d3.event.preventDefault();
-		myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
-		myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
-		onStart();
+		if (status.show_TX30 || status.show_PR95PERC || status.show_PRCPTOT) {
+			myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
+			myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
+			myTouches.identifier = d3.event.touches[0].identifier;
+			onStart();
+		}
 	})
 	.on('touchmove', function(d) {
 		d3.event.preventDefault();
 		myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
 		myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
+		myTouches.identifier = d3.event.touches[0].identifier;
 		onMove();
 	})
 	.on('touchend', function(d) {
 		d3.event.preventDefault();
-		onEnd();
+		if (d3.event.touches.length == 0) {
+			onEnd();
+		}
 	})
 
 function onStart() {
-	holeMaskCircles = holeMaskCircles.data([myTouches])
+	holeMaskCircles = holeMaskCircles.data([myTouches], function(d){ return d.identifier;})
 	holeMaskCircles.exit().remove();
 	holeMaskCircles = holeMaskCircles.enter().append('circle')
 		.attr('class', 'hole-mask-circles')
@@ -153,7 +159,7 @@ function onStart() {
 		.attr('r', radius);
 
 	//
-	overlayCircles = overlayCircles.data([myTouches]);
+	overlayCircles = overlayCircles.data([myTouches], function(d){ return d.identifier;});
 	overlayCircles.exit().remove();
 	overlayCircles = overlayCircles.enter().append('circle')
 		.attr('class', 'hole-mask-circles')
@@ -161,26 +167,30 @@ function onStart() {
 		.attr('cy', function(d) { return d.y; })
 		.attr('r', 0)
 		.attr('fill', 'white')
-		.attr('stroke','red')
+		.attr('stroke', graphVars.gray)
 		.merge(overlayCircles);
 
 	overlayCircles.transition()
 		.duration(350)
 		.ease(d3.easeBackOut)
 		.attr('r', radius);
+
+	updateLayers(myTouches.x, myTouches.y, true);
 }
 
 function onMove() {
-	holeMaskCircles.data([myTouches])
+	holeMaskCircles.data([myTouches], function(d){ return d.identifier;})
 	holeMaskCircles.exit().remove();
 	holeMaskCircles.attr('cx', function(d) { return d.x; })
 		.attr('cy', function(d) { return d.y; })
 
 	//
-	overlayCircles.data([myTouches])
+	overlayCircles.data([myTouches], function(d){ return d.identifier;})
 	overlayCircles.exit().remove();
 	overlayCircles.attr('cx', function(d) { return d.x; })
 		.attr('cy', function(d) { return d.y; })
+
+	updateLayers(myTouches.x, myTouches.y, true);
 }
 
 function onEnd() {
@@ -200,6 +210,9 @@ function onEnd() {
 		.ease(d3.easeBackIn)
 		.attr('r', 0)
 		.remove();
+
+	updateLayers(0, 0, false);
+	selectedProvince = '';
 }
 
 //load datasets
@@ -243,11 +256,6 @@ function setup() {
 	maskCanvas.id('maskCanvas');
 	//maskCanvas.attribute('mask', 'url(#hole-mask)');
 
-	//initialize buttons
-	initializeButton('#toggle-1', 'show_TX30');
-	initializeButton('#toggle-2', 'show_PR95PERC');
-	initializeButton('#toggle-3', 'show_PRCPTOT');
-
 	//initialize map
 	prov_layer = new ShapeFileLayer(province, myMap, w, h);
 	italy_layer = new ShapeFileLayer(confini, myMap, w, h);
@@ -265,13 +273,15 @@ function setup() {
 
 //initialize d3 buttons
 d3.selectAll('.timeline_button')
-	.on('click', function() {
+	.on('touchstart', function() {
 		// d3.event.preventDefault();
 		var activeClass = "selected";
 
 		d3.selectAll(".timeline_button")
 			.classed(activeClass, false);
-		d3.select(this).classed(activeClass, true)
+		d3.selectAll(".timeline_button").select('circle').transition().duration(350).ease(d3.easeBackIn).attr('r', 5);
+		d3.select(this).classed(activeClass, true);
+		d3.select(this).select('circle').transition().duration(350).ease(d3.easeBackOut).attr('r', 10);
 		var highlighter = d3.select('#timeline_2011_2040 path');
 		if (this.id == 'timeline_2011_2040') {
 			highlighter.transition().attr("transform", "translate(0,0)");
@@ -288,28 +298,40 @@ d3.selectAll('.timeline_button')
 		updateLayers(0, 0, false);
 	});
 
+d3.selectAll('.btn-toggle')
+	.on('touchstart', function() {
+		var newStatus = this.getAttribute('data-variable');
+		var oldStatus = status[newStatus];
+		this.classList.toggle('selected');
+		d3.select('.legenda[data-variable= "'+ newStatus +'"]').node().classList.toggle('shown');
+		var $button = d3.select(this).select('p');
+		$button.text().includes('Mostra') ? $button.text("Rimuovi dalla mappa") : $button.text("Mostra sulla mappa");
+		status[newStatus] = !oldStatus;
+		updateLayers(0, 0, false);
+	});
+
 // this function allows you to bind a DIV item to the status of a variable
-function initializeButton(_btn_selector, _target_variable) {
-	var button = select(_btn_selector);
-	button.selected = false;
-	button.switch = function(event) {
-		if (event.type == "touchend") {
-			if (button.selected) {
-				button.removeClass('selected');
-			} else {
-				button.addClass('selected');
-			}
-
-			button.selected = !button.selected
-
-			status[_target_variable] = button.selected;
-
-			// console.log(status);
-		}
-	};
-	button.elt.self = button;
-	button.touchEnded(button.switch);
-}
+// function initializeButton(_btn_selector, _target_variable) {
+// 	var button = select(_btn_selector);
+// 	button.selected = false;
+// 	button.switch = function(event) {
+// 		if (event.type == "touchend") {
+// 			if (button.selected) {
+// 				button.removeClass('selected');
+// 			} else {
+// 				button.addClass('selected');
+// 			}
+//
+// 			button.selected = !button.selected
+//
+// 			status[_target_variable] = button.selected;
+//
+// 			// console.log(status);
+// 		}
+// 	};
+// 	button.elt.self = button;
+// 	button.touchEnded(button.switch);
+// }
 
 var selectedProvince = '';
 
@@ -323,29 +345,29 @@ var x = d3.scaleOrdinal()
 	.domain(["2011-2040", "2041-2070", "2071-2100"])
 	.range([0, sw / 2, sw]);
 
+//variables for first graph
 var y = d3.scaleLinear()
 	.rangeRound([sh, 0])
-	.domain([0, 90]);
+	.domain([0, 80]);
 
 var area = d3.area()
 	.x(function(d) { return x(d.anno); })
 	.y1(function(d) { return y(+d.valore); })
 	.y0(y(0));
 
-//variables for first graph
 var svg1 = d3.select('#graph_01')
 
 var g1 = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-let axisBottom1 = g1.append("g")
+var axisBottom1 = g1.append("g")
 	.attr("transform", "translate(0," + y(0) + ")");
-axisBottom1.call(d3.axisBottom(x).tickSize(-sh).tickPadding(8));
+axisBottom1.call(d3.axisBottom(x).tickSize(-sh - 14).tickPadding(8));
 axisBottom1.select(".domain").remove();
 axisBottom1.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2").attr("transform", "translate(0, 6)");
 
-let axisRight1 = g1.append("g")
+var axisRight1 = g1.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
-axisRight1.call(d3.axisRight(y).ticks(5).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+axisRight1.call(d3.axisRight(y).tickValues([0,20,40,60,80]).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
 	return d > 0 ? "+ " + d + " giorni" : d + " giorni";
 }));
 axisRight1.select(".domain").remove();
@@ -357,41 +379,68 @@ var paths_g1 = g1.append('g');
 
 
 //variables for second graph
-var svg2 = d3.select('#graph_02')
+var y2 = d3.scaleLinear()
+	.rangeRound([sh, 0])
+	.domain([-10, 60]);
+
+var area2 = d3.area()
+	.x(function(d) { return x(d.anno); })
+	.y1(function(d) { return y2(+d.valore); })
+	.y0(y2(0));
+
+var svg2 = d3.select('#graph_02');
 
 var g2 = svg2.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var paths_g2 = g2.append('g')
+var axisBottom2 = g2.append("g")
+	.attr("transform", "translate(0," + y2(0) + ")");
+axisBottom2.call(d3.axisBottom(x).tickSize(-sh - 14).tickPadding(30));
+axisBottom2.select(".domain").remove();
+axisBottom2.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2").attr("transform", "translate(0, 24)");
 
-g2.append("g")
-	.attr("transform", "translate(0," + y(0) + ")")
-	.call(d3.axisBottom(x));
+var axisRight2 = g2.append("g")
+	.attr("transform", "translate(" + sw + ", 0)");
+axisRight2.call(d3.axisRight(y2).tickValues([-10,0,20,40,60]).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+	return d > 0 ? "+ " + d + " mm" : (d + " mm").replace(/-/,'- ');
+}));
+axisRight2.select(".domain").remove();
+axisRight2.selectAll(".tick text").attr("dy", "0em").style("fill", graphVars.gray);
+axisRight2.selectAll(".tick:not(:nth-of-type(2)) line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2");
+axisRight2.selectAll(".tick line").attr("transform", "translate(6, 0)");
 
-g2.append("g")
-	.call(d3.axisLeft(y))
+var paths_g2 = g2.append('g');
 
 //variables for third graph
 var y3 = d3.scaleLinear()
 	.rangeRound([sh, 0])
-	.domain([-410, 0]);
+	.domain([-320, 28]);
 
 var area3 = d3.area()
 	.x(function(d) { return x(d.anno); })
 	.y1(function(d) { return y3(+d.valore); })
 	.y0(y3(0));
 
-var svg3 = d3.select('#graph_03')
+var svg3 = d3.select('#graph_03');
 
 var g3 = svg3.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var paths_g3 = g3.append('g')
+var axisBottom3 = g3.append("g")
+	.attr("transform", "translate(0," + y3(0) + ")");
+axisBottom3.call(d3.axisBottom(x).tickSize(-sh - 14).tickPadding(130));
+axisBottom3.select(".domain").remove();
+axisBottom3.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2").attr("transform", "translate(0, 124)");
 
-g3.append("g")
-	.attr("transform", "translate(0," + y3(0) + ")")
-	.call(d3.axisTop(x));
+var axisRight3 = g3.append("g")
+	.attr("transform", "translate(" + sw + ", 0)");
+axisRight3.call(d3.axisRight(y3).tickValues([-320,-240,-160,-80,0,40]).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+	return d > 0 ? "+ " + d + " mm" : (d + " mm").replace(/-/,'- ');
+}));
+axisRight3.select(".domain").remove();
+axisRight3.selectAll(".tick text").attr("dy", "0em").style("fill", graphVars.gray);
+axisRight3.selectAll(".tick:not(:nth-of-type(5)) line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2");
+axisRight3.selectAll(".tick line").attr("transform", "translate(6, 0)");
 
-g3.append("g")
-	.call(d3.axisLeft(y3))
+var paths_g3 = g3.append('g');
 
 
 function updateLayers(_x, _y, _showPanel) {
@@ -408,31 +457,31 @@ function updateLayers(_x, _y, _showPanel) {
 	if (status.show_TX30) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-TX30-RCP85'], 0, 0, w, h);
-		// d3.select('#graph_01_container').style("display", "inline");
+		d3.select('#graph_01_container').style("opacity", 1);
 	} else {
-		// d3.select('#graph_01_container').style("display", "none");
+		d3.select('#graph_01_container').style("opacity", 1e-6);
 	}
 	if (status.show_PR95PERC) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-PR95PERC-RCP85'], 0, 0, w, h);
-		// d3.select('#graph_02_container').style("display", "inline");
+		d3.select('#graph_02_container').style("opacity", 1);
 	} else {
-		// d3.select('#graph_02_container').style("display", "none");
+		d3.select('#graph_02_container').style("opacity", 1e-6);
 	}
 	if (status.show_PRCPTOT) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-PRCPTOT-RCP85'], 0, 0, w, h);
-		// d3.select('#graph_03_container').style("display", "inline");
+		d3.select('#graph_03_container').style("opacity", 1);
 	} else {
-		// d3.select('#graph_03_container').style("display", "none");
+		d3.select('#graph_03_container').style("opacity", 1e-6);
 	}
 
 	//update panel
-	if (_showPanel && !(!status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT)) {
+	if (_showPanel && (status.show_TX30 || status.show_PR95PERC || status.show_PRCPTOT)) {
 
 		maskCanvas.clear();
 
-		var newprov = prov_layer.drawInFront(_x, _y)
+		var newprov = prov_layer.drawInFront(_x, _y);
 		// console.log(newprov.properties.DEN_CMPRO);
 		//maskCanvas.image(prov_layer.image, 0, 0, w, h);
 
@@ -479,17 +528,17 @@ function updateLayers(_x, _y, _showPanel) {
 
 			g1.append("rect")
 				.classed("graph-rect", true)
-				.attr("rx", 4)
-				.attr("ry", 4)
-				.attr("x", x(status.years) - 30)
-				.attr("y", y(90))
-				.attr("width", 60)
-				.attr("height", y(0) + 20)
+				.attr("rx", 20)
+				.attr("ry", 20)
+				.attr("x", x(status.years) - 20)
+				.attr("y", y(85))
+				.attr("width", 40)
+				.attr("height", y(0) + 13)
 
 			//first text
 			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
-			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) + '.').style('opacity', 1);
+			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) + '.').transition().style('opacity', 1);
 
 			//second graph
 			var PR95PERC_data = d3.nest()
@@ -506,21 +555,27 @@ function updateLayers(_x, _y, _showPanel) {
 				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths2)
 				.transition()
-				.attr("d", function(d) { return area(d.values) });
+				.attr("d", function(d) { return area2(d.values) });
+
+			axisBottom2.selectAll('.tick text').style('fill', function(d) {
+				return d == status.years ? graphVars.black : graphVars.gray;
+			}).style('font-weight', function(d) {
+				return d == status.years ? "bold" : "normal";
+			})
 
 			g2.append("rect")
 				.classed("graph-rect", true)
-				.attr("rx", 4)
-				.attr("ry", 4)
-				.attr("x", x(status.years) - 30)
-				.attr("y", y(90))
-				.attr("width", 60)
-				.attr("height", y(0) + 20)
+				.attr("rx", 20)
+				.attr("ry", 20)
+				.attr("x", x(status.years) - 20)
+				.attr("y", y2(65))
+				.attr("width", 40)
+				.attr("height", y2(-8) + 18);
 
 			//second text
 			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
-			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').style('opacity', 1);
+			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').transition().style('opacity', 1);
 
 			//third graph
 			var PRCPTOT_data = d3.nest()
@@ -539,27 +594,135 @@ function updateLayers(_x, _y, _showPanel) {
 				.transition()
 				.attr("d", function(d) { return area3(d.values) });
 
+			axisBottom3.selectAll('.tick text').style('fill', function(d) {
+				return d == status.years ? graphVars.black : graphVars.gray;
+			}).style('font-weight', function(d) {
+				return d == status.years ? "bold" : "normal";
+			})
+
 			g3.append("rect")
 				.classed("graph-rect", true)
-				.attr("rx", 4)
-				.attr("ry", 4)
-				.attr("x", x(status.years) - 30)
-				.attr("y", y3(0) - 20)
-				.attr("width", 60)
-				.attr("height", y3(-410) + 20)
+				.attr("rx", 20)
+				.attr("ry", 20)
+				.attr("x", x(status.years) - 20)
+				.attr("y", y3(55))
+				.attr("width", 40)
+				.attr("height", y3(-320) + 15);
 
 			//third text
 			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
-			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').style('opacity', 1);
+			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').transition().style('opacity', 1);
 
-			// d3.select('#spiega').style("opacity", 1e-6);
-			// d3.select('#areachart').style("opacity", 1);
+			d3.select('.graphs-box').transition().style("opacity", 1);
+		} else if (newprov == null) {
+			selectedProvince = '';
+			d3.selectAll('.graph-rect').remove();
+			d3.select('#nomeprovincia').html('Seleziona una provincia');
+
+			//first graph
+			var paths1 = paths_g1.selectAll("path")
+				.data([{"key": "RCP85", "values": [{"anno": "2011-2040", "valore": "0"}, {"anno": "2041-2070", "valore": "0"}, {"anno": "2071-2100", "valore": "0"}]}, {"key": "RCP45", "values": [{"anno": "2011-2040", "valore": "0"}, {"anno": "2041-2070", "valore": "0"}, {"anno": "2071-2100", "valore": "0"}]}]);
+
+			paths1.enter()
+				.append("path")
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.red : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
+				.merge(paths1)
+				.transition()
+				.attr("d", function(d) { return area(d.values) });
+
+			axisBottom1.selectAll('.tick text').style('fill', function(d) {
+				return d == status.years ? graphVars.black : graphVars.gray;
+			}).style('font-weight', function(d) {
+				return d == status.years ? "bold" : "normal";
+			})
+
+			g1.append("rect")
+				.classed("graph-rect", true)
+				.attr("rx", 20)
+				.attr("ry", 20)
+				.attr("x", x(status.years) - 20)
+				.attr("y", y(85))
+				.attr("width", 40)
+				.attr("height", y(0) + 13)
+
+			d3.select("#desc_01").transition().style('opacity', 1e-6);
+
+			//second graph
+			var paths2 = paths_g2.selectAll("path")
+				.data([{"key": "RCP85", "values": [{"anno": "2011-2040", "valore": "0"}, {"anno": "2041-2070", "valore": "0"}, {"anno": "2071-2100", "valore": "0"}]}, {"key": "RCP45", "values": [{"anno": "2011-2040", "valore": "0"}, {"anno": "2041-2070", "valore": "0"}, {"anno": "2071-2100", "valore": "0"}]}]);
+
+			paths2.enter()
+				.append("path")
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.blue : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
+				.merge(paths2)
+				.transition()
+				.attr("d", function(d) { return area2(d.values) });
+
+			axisBottom2.selectAll('.tick text').style('fill', function(d) {
+				return d == status.years ? graphVars.black : graphVars.gray;
+			}).style('font-weight', function(d) {
+				return d == status.years ? "bold" : "normal";
+			})
+
+			g2.append("rect")
+				.classed("graph-rect", true)
+				.attr("rx", 20)
+				.attr("ry", 20)
+				.attr("x", x(status.years) - 20)
+				.attr("y", y2(65))
+				.attr("width", 40)
+				.attr("height", y2(-8) + 18);
+
+			d3.select("#desc_02").transition().style('opacity', 1e-6);
+
+			//third graph
+			var paths3 = paths_g3.selectAll("path")
+				.data([{"key": "RCP85", "values": [{"anno": "2011-2040", "valore": "0"}, {"anno": "2041-2070", "valore": "0"}, {"anno": "2071-2100", "valore": "0"}]}, {"key": "RCP45", "values": [{"anno": "2011-2040", "valore": "0"}, {"anno": "2041-2070", "valore": "0"}, {"anno": "2071-2100", "valore": "0"}]}]);
+
+			paths3.enter()
+				.append("path")
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.yellow : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
+				.merge(paths3)
+				.transition()
+				.attr("d", function(d) { return area3(d.values) });
+
+			axisBottom3.selectAll('.tick text').style('fill', function(d) {
+				return d == status.years ? graphVars.black : graphVars.gray;
+			}).style('font-weight', function(d) {
+				return d == status.years ? "bold" : "normal";
+			})
+
+			g3.append("rect")
+				.classed("graph-rect", true)
+				.attr("rx", 20)
+				.attr("ry", 20)
+				.attr("x", x(status.years) - 20)
+				.attr("y", y3(55))
+				.attr("width", 40)
+				.attr("height", y3(-320) + 15)
+
+			d3.select("#desc_03").transition().style('opacity', 1e-6);
+
+			d3.select('.graphs-box').transition().style("opacity", 1);
 		}
 	} else {
+		d3.select('.graphs-box').transition().style("opacity", 1e-6);
 
-		// d3.select('#spiega').style("opacity", 1);
-		// d3.select('#areachart').style("opacity", 1e-6);
+		holeMaskCircles.transition()
+			.duration(350)
+			.ease(d3.easeBackIn)
+			.attr('r', 0)
+			.remove();
+
+		overlayCircles.transition()
+			.duration(350)
+			.ease(d3.easeBackIn)
+			.attr('r', 0)
+			.remove();
 	}
 }
 
@@ -800,19 +963,19 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 	//
 }
 
-function touchStarted() {
-	if (touches.length > 0) {
-		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY - maskCanvas.elt.getBoundingClientRect().y, true);
-	}
-}
-
-function touchMoved() {
-	if (touches.length > 0) {
-		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY - maskCanvas.elt.getBoundingClientRect().y, true);
-	}
-}
-
-function touchEnded() {
-	updateLayers(0, 0, false);
-	selectedProvince = '';
-}
+// function touchStarted() {
+// 	if (touches.length > 0) {
+// 		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY - maskCanvas.elt.getBoundingClientRect().y, true);
+// 	}
+// }
+//
+// function touchMoved() {
+// 	if (touches.length > 0) {
+// 		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY - maskCanvas.elt.getBoundingClientRect().y, true);
+// 	}
+// }
+//
+// function touchEnded() {
+// 	updateLayers(0, 0, false);
+// 	selectedProvince = '';
+// }
