@@ -152,6 +152,25 @@ h1, h2, h3, h4 {
 	position: relative;
 }
 
+#map {
+	position: relative;
+}
+
+#svg_mask, #RCP85_layer, #svg_overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+}
+
+#canvas_map {
+	pointer-events: none;
+}
+
+#RCP45_layer {
+	mix-blend-mode: multiply;
+}
+
 /* GRAPHS STYLES */
 .bianco-container {
 	outline: 2px solid var(--lightGrey);
