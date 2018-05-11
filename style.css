@@ -234,3 +234,8 @@ p#nomeprovincia {
 	padding: 10px 0 0 25px;
 	margin: 0;
 }
+
+/* BOTTOM PANEL STYLES */
+#defaultCanvas0 {
+	display: none;
+}
