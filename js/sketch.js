@@ -1,5 +1,8 @@
 var myCanvas;
 
+//size
+let w = 960;
+let h = 960;
 
 //By default, none is visible.
 const status = {
@@ -26,13 +29,13 @@ const key = 'pk.eyJ1IjoibWlraW1hIiwiYSI6IjNvWUMwaUEifQ.Za_-O03W3UdQxZwS3bLxtg';
 
 // Options for map
 const options = {
-	lat: 42,
+	lat: 42.1,
 	lng: 12,
-	zoom: 5.5,
+	zoom: 5.57,
 	style: 'light-v9',
 	pitch: 0,
-	width: 960,
-	height: 960
+	width: w,
+	height: h
 };
 
 const mappa = new Mappa('Mapbox', key);
@@ -43,9 +46,6 @@ let mapImg;
 let fullData, province, confini, prov_data;
 //images
 let italy_bg;
-
-//size
-let w, h;
 
 //drawing variables
 
@@ -154,14 +154,15 @@ function onStart() {
 
 	//
 	overlayCircles = overlayCircles.data([myTouches]);
-
+	overlayCircles.exit().remove();
 	overlayCircles = overlayCircles.enter().append('circle')
 		.attr('class', 'hole-mask-circles')
 		.attr('cx', function(d) { return d.x; })
 		.attr('cy', function(d) { return d.y; })
 		.attr('r', 0)
 		.attr('fill', 'white')
-		.attr('stroke','red');
+		.attr('stroke','red')
+		.merge(overlayCircles);
 
 	overlayCircles.transition()
 		.duration(350)
@@ -171,12 +172,14 @@ function onStart() {
 
 function onMove() {
 	holeMaskCircles.data([myTouches])
-		.attr('cx', function(d) { return d.x; })
+	holeMaskCircles.exit().remove();
+	holeMaskCircles.attr('cx', function(d) { return d.x; })
 		.attr('cy', function(d) { return d.y; })
 
 	//
 	overlayCircles.data([myTouches])
-		.attr('cx', function(d) { return d.x; })
+	overlayCircles.exit().remove();
+	overlayCircles.attr('cx', function(d) { return d.x; })
 		.attr('cy', function(d) { return d.y; })
 }
 
@@ -226,9 +229,6 @@ function preload() {
 function setup() {
 	//Create the canvas
 	var parentDiv = select('#map');
-
-	w = 960;
-	h = 960;
 
 	mainCanvas = createGraphics(w, h);
 	mainCanvas.pixelDensity(1);
@@ -397,7 +397,7 @@ g3.append("g")
 function updateLayers(_x, _y, _showPanel) {
 	//clear canvas
 	mainCanvas.clear();
-	
+
 	//draw background
 	mainCanvas.image(italy_layer.image, 0, 0, w, h);
 	//prov_layer
@@ -432,29 +432,11 @@ function updateLayers(_x, _y, _showPanel) {
 
 		maskCanvas.clear();
 
-		var newprov = prov_layer.drawInFront(_x, _y);
+		var newprov = prov_layer.drawInFront(_x, _y)
 		// console.log(newprov.properties.DEN_CMPRO);
-		maskCanvas.image(prov_layer.image, 0, 0, w, h);
+		//maskCanvas.image(prov_layer.image, 0, 0, w, h);
 
 		maskCanvas.blendMode(MULTIPLY);
-
-		// var _msize = 200;
-		//
-		// var outimg = createImage(_msize, _msize);
-		// outimg.copy(maskCanvas, _x - _msize / 2, _y - _msize / 2, _msize, _msize, 0, 0, _msize, _msize);
-		//
-		// var tempMask = createGraphics(_msize, _msize);
-		// tempMask.ellipseMode(CENTER);
-		// tempMask.ellipse(_msize / 2, _msize / 2, _msize);
-		// outimg.mask(tempMask);
-		// tempMask.remove();
-		//
-		// mainCanvas.blendMode(BLEND);
-		//
-		//
-		// //mainCanvas.ellipse(_x,_y,_msize);
-		// mainCanvas.image(outimg, _x - _msize / 2, _y - _msize / 2);
-
 
 		if (status.show_TX30)
 			maskCanvas.image(imagesLayers[status.years + '-TX30-RCP45'], 0, 0, w, h);
@@ -754,7 +736,6 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 		layer.image(this.image, 0, 0);
 		//perform hittest
 		var selected = this.hitTest(_mx, _my);
-
 		if (selected != null) {
 			//draw the selected one
 			layer.noFill();
@@ -772,11 +753,9 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 		}
 		//return as image
 		var outimg = createImage(layer.width, layer.height);
-		outimg.copy(0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
+		outimg.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
 
-		//maskCanvas.fill('red');
-		maskCanvas.ellipse(_mx,_my,10);
-		maskCanvas.image(outimg, 0, 0, layer.width, layer.height);
+		maskCanvas.image(outimg, 0, 0);
 
 		return selected;
 	}
