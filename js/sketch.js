@@ -49,16 +49,155 @@ let w, h;
 
 //drawing variables
 
-let canvas;
-let l1, l2, l3,
-	l1_45, l2_45, l3_45,
-	prov_layer, italy_layer
+let mainCanvas, maskCanvas;
+let svg;
+
+let imagesLayers = {};
 
 //lens variables
 let lens_size = 200;
 
 //timeline buttons
 let timeline_btns = [];
+
+//initialize svg
+svg = d3.select("#svg_mask").append("svg")
+	.attr("width", 960 + "px")
+	.attr("height", 960 + "px")
+	//.append("g")
+
+// var under = svg.append("g")
+
+// var container = svg.append("g")
+
+var svg_overlay = d3.select("#svg_overlay").append("svg")
+	.attr("width", 960 + "px")
+	.attr("height", 960 + "px")
+
+var masked = svg.append("g")
+	.attr('mask', 'url(#hole-mask)');
+
+masked.append('rect')
+	.attr('x',0)
+	.attr('y',0)
+	.attr("width", 960 + "px")
+	.attr("height", 960 + "px")
+	.style("fill","white")
+
+// // add foreign object to svg
+// // https://gist.github.com/mbostock/1424037
+// var foreignObject = container.append("foreignObject")
+// 	.attr("width", w)
+// 	.attr("height", h);
+
+// // add embedded body to foreign object
+// var foBody = foreignObject.append("xhtml:body")
+// 	.attr("id", "foBody")
+// 	.style("margin", "0px")
+// 	.style("padding", "0px")
+// 	.style("background-color", "none")
+// 	.style("width", w + "px")
+// 	.style("height", h + "px")
+// 	.style("position", "relative")
+
+var myTouches;
+var radius = 100;
+
+var defs = svg.append('defs');
+
+var holeMask = defs.append('mask')
+	.attr('id', 'hole-mask')
+	.append('g');
+
+holeMask.append('rect')
+	.attr('width', '100%')
+	.attr('height', '100%')
+	.attr('x', 0)
+	.attr('y', 0)
+	.attr('fill', 'white');
+
+var holeMaskCircles = holeMask.selectAll('.hole-mask-circles');
+var overlayCircles = svg_overlay.selectAll('.overlay-circles');
+
+d3.select('#map').on('touchstart', function(d) {
+		d3.event.preventDefault();
+		myTouches = d3.event.touches;
+		onStart();
+	})
+	.on('touchmove', function(d) {
+		d3.event.preventDefault();
+		myTouches = d3.event.touches;
+		onMove();
+	})
+	.on('touchend', function(d) {
+		d3.event.preventDefault();
+		myTouches = d3.event.touches;
+		onEnd();
+	})
+
+function onStart() {
+	holeMaskCircles = holeMaskCircles.data([myTouches[0]], function(d) { return d.identifier; })
+	holeMaskCircles.exit().remove();
+	holeMaskCircles = holeMaskCircles.enter().append('circle')
+		.attr('class', 'hole-mask-circles')
+		.attr('cx', function(d) { return d.clientX - d.target.getBoundingClientRect().x; })
+		.attr('cy', function(d) { return d.clientY; })
+		.attr('r', 0)
+		.attr('fill', 'black')
+		.merge(holeMaskCircles);
+
+	holeMaskCircles.transition()
+		.duration(350)
+		.ease(d3.easeBackOut)
+		.attr('r', radius);
+
+	//
+	overlayCircles = overlayCircles.data([myTouches[0]], function(d) { return d.identifier; })
+	overlayCircles.exit().remove();
+	overlayCircles = overlayCircles.enter().append('circle')
+		.attr('class', 'hole-mask-circles')
+		.attr('cx', function(d) { return d.clientX - d.target.getBoundingClientRect().x; })
+		.attr('cy', function(d) { return d.clientY; })
+		.attr('r', 0)
+		.attr('fill', 'white')
+		.attr('stroke','red')
+		.merge(overlayCircles);
+
+	overlayCircles.transition()
+		.duration(350)
+		.ease(d3.easeBackOut)
+		.attr('r', radius);
+}
+
+function onMove() {
+	holeMaskCircles.data(myTouches, function(d) { return d.identifier; })
+		.attr('cx', function(d) { return d.clientX - d.target.getBoundingClientRect().x; })
+		.attr('cy', function(d) { return d.clientY; })
+
+	//
+	overlayCircles.data(myTouches, function(d) { return d.identifier; })
+		.attr('cx', function(d) { return d.clientX - d.target.getBoundingClientRect().x; })
+		.attr('cy', function(d) { return d.clientY; })
+}
+
+function onEnd() {
+	holeMaskCircles = holeMaskCircles.data(myTouches, function(d) { return d.identifier; })
+	holeMaskCircles.exit()
+		.transition()
+		.duration(350)
+		.ease(d3.easeBackIn)
+		.attr('r', 0)
+		.remove();
+
+	//
+	overlayCircles = overlayCircles.data(myTouches, function(d) { return d.identifier; })
+	overlayCircles.exit()
+		.transition()
+		.duration(350)
+		.ease(d3.easeBackIn)
+		.attr('r', 0)
+		.remove();
+}
 
 //load datasets
 function preload() {
@@ -87,15 +226,22 @@ function preload() {
 function setup() {
 	//Create the canvas
 	var parentDiv = select('#map');
-	console.log(parentDiv);
 
 	w = 960;
 	h = 960;
 
-	canvas = createCanvas(w, h);
-	pixelDensity(1);
+	mainCanvas = createGraphics(w, h);
+	mainCanvas.pixelDensity(1);
+	mainCanvas.parent('canvas_RCP85_layer');
+	mainCanvas.style('display', 'block');
+	//mainCanvas.id('mainCanvas')
 
-	canvas.parent('map');
+	maskCanvas = createGraphics(w, h);
+	maskCanvas.pixelDensity(1);
+	maskCanvas.parent('canvas_map');
+	maskCanvas.style('display', 'block');
+	maskCanvas.id('maskCanvas');
+	//maskCanvas.attribute('mask', 'url(#hole-mask)');
 
 	//initialize buttons
 	initializeButton('#toggle-1', 'show_TX30');
@@ -103,17 +249,18 @@ function setup() {
 	initializeButton('#toggle-3', 'show_PRCPTOT');
 
 	//initialize map
-	l1 = new GeoLayer(fullData.values, 74, myMap, w, h);
-	l1_45 = new GeoLayer(fullData.values, 74, myMap, w, h);
-	l2 = new GeoLayer(fullData.values, 88, myMap, w, h);
-	l2_45 = new GeoLayer(fullData.values, 88, myMap, w, h);
-	l3 = new GeoLayer(fullData.values, -410, myMap, w, h);
-	l3_45 = new GeoLayer(fullData.values, -410, myMap, w, h);
 	prov_layer = new ShapeFileLayer(province, myMap, w, h);
 	italy_layer = new ShapeFileLayer(confini, myMap, w, h);
 
-	initMap(status.years);
+	//call creapallozzi for each variable
+	createPallozzi('TX30', graphVars.red);
+	createPallozzi('PR95PERC', graphVars.blue);
+	createPallozzi('PRCPTOT', graphVars.yellow);
 
+	prov_layer.draw();
+	italy_layer.draw();
+
+	updateLayers(0, 0, false);
 }
 
 //initialize d3 buttons
@@ -127,18 +274,15 @@ d3.selectAll('.timeline_button')
 		d3.select(this).classed(activeClass, true)
 		if (this.id == 'timeline_2011_2040') {
 			status.years = '2011-2040';
-			initMap(status.years);
 		}
 		if (this.id == 'timeline_2041_2070') {
 			status.years = '2041-2070';
-			initMap(status.years);
 		}
 		if (this.id == 'timeline_2071_2100') {
 			status.years = '2071-2100';
-			initMap(status.years);
 		}
+		updateLayers(0, 0, false);
 	});
-
 
 // this function allows you to bind a DIV item to the status of a variable
 function initializeButton(_btn_selector, _target_variable) {
@@ -163,49 +307,13 @@ function initializeButton(_btn_selector, _target_variable) {
 	button.touchEnded(button.switch);
 }
 
-function initMap(_years) {
-	//render all the layers
-	console.log('initialize', _years);
-	clear();
-
-	l1.color = graphVars.red;
-	l1.init(_years, 'TX30', 'RCP85');
-	l1.draw();
-
-	l1_45.color = graphVars.red;
-	l1_45.init(_years, 'TX30', 'RCP45');
-	l1_45.draw();
-
-	l2.color = graphVars.blue;
-	l2.init(_years, 'PR95PERC', 'RCP85');
-	l2.draw();
-
-	l2_45.color = graphVars.blue;
-	l2_45.init(_years, 'PR95PERC', 'RCP45');
-	l2_45.draw();
-
-	l3.color = graphVars.yellow;
-	l3.init(_years, 'PRCPTOT', 'RCP85');
-	l3.draw();
-
-
-	l3_45.color = graphVars.yellow;
-	l3_45.init(_years, 'PRCPTOT', 'RCP45');
-	l3_45.draw();
-
-	prov_layer.draw();
-	italy_layer.draw();
-
-	updateLayers(0, 0, false);
-}
-
 var selectedProvince = '';
 
 // variables for all the graphs
 
 var margin = { top: 25, right: 120, bottom: 25, left: 80 };
-var sw = +d3.select('#graph_01').style("width").slice(0,-2) - margin.left - margin.right;
-var sh = +d3.select('#graph_01').style("height").slice(0,-2) - margin.top - margin.bottom;
+var sw = +d3.select('#graph_01').style("width").slice(0, -2) - margin.left - margin.right;
+var sh = +d3.select('#graph_01').style("height").slice(0, -2) - margin.top - margin.bottom;
 
 var x = d3.scaleOrdinal()
 	.domain(["2011-2040", "2041-2070", "2071-2100"])
@@ -234,8 +342,8 @@ axisBottom1.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("st
 let axisRight1 = g1.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
 axisRight1.call(d3.axisRight(y).ticks(5).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
-	  return d > 0 ? "+ " + d + " giorni" : d + " giorni";
-    }));
+	return d > 0 ? "+ " + d + " giorni" : d + " giorni";
+}));
 axisRight1.select(".domain").remove();
 axisRight1.selectAll(".tick text").attr("dy", "0em").style("fill", graphVars.gray);
 axisRight1.selectAll(".tick:not(:first-of-type) line").attr("stroke", graphVars.lightGray).attr("stroke-dasharray", "2,2");
@@ -283,38 +391,72 @@ g3.append("g")
 
 
 function updateLayers(_x, _y, _showPanel) {
-	clear();
-	image(italy_layer.image,0,0,w,h);
+	//clear canvas
+	mainCanvas.clear();
 
-	blendMode(MULTIPLY);
+	//draw background
+	mainCanvas.image(italy_layer.image, 0, 0, w, h);
+	//prov_layer
+
+	mainCanvas.blendMode(MULTIPLY);
+
+
 	if (status.show_TX30) {
-		l1_45.invertMask(_x, _y, lens_size);
-		l1.mask(_x, _y, lens_size);
+		// draw the RCP85 image
+		mainCanvas.image(imagesLayers[status.years + '-TX30-RCP85'], 0, 0, w, h);
 		d3.select('#graph_01_container').style("display", "inline");
 	} else {
 		d3.select('#graph_01_container').style("display", "none");
 	}
-	if (status.show_PRCPTOT) {
-		l3.mask(_x, _y, lens_size)
-		l3_45.invertMask(_x, _y, lens_size);
-		d3.select('#graph_03_container').style("display", "inline");
-	} else {
-		d3.select('#graph_03_container').style("display", "none");
-	}
 	if (status.show_PR95PERC) {
-		l2_45.invertMask(_x, _y, lens_size);
-		l2.mask(_x, _y, lens_size);
+		// draw the RCP85 image
+		mainCanvas.image(imagesLayers[status.years + '-PR95PERC-RCP85'], 0, 0, w, h);
 		d3.select('#graph_02_container').style("display", "inline");
 	} else {
 		d3.select('#graph_02_container').style("display", "none");
 	}
+	if (status.show_PRCPTOT) {
+		// draw the RCP85 image
+		mainCanvas.image(imagesLayers[status.years + '-PRCPTOT-RCP85'], 0, 0, w, h);
+		d3.select('#graph_03_container').style("display", "inline");
+	} else {
+		d3.select('#graph_03_container').style("display", "none");
+	}
 
+	//update panel
 	if (_showPanel && !(!status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT)) {
-		var newprov = prov_layer.mask(_x, _y, lens_size);
 
-		stroke('black');
-		noFill();
-		ellipse(_x, _y, lens_size);
+		maskCanvas.clear();
+		
+		var newprov = prov_layer.drawInFront(_x, _y);
+		maskCanvas.image(prov_layer.image, 0, 0, w, h);
+
+		maskCanvas.blendMode(MULTIPLY);
+
+		var _msize = 200;
+
+		var outimg = createImage(_msize, _msize);
+		outimg.copy(maskCanvas, _x - _msize / 2, _y - _msize / 2, _msize, _msize, 0, 0, _msize, _msize);
+
+		var tempMask = createGraphics(_msize, _msize);
+		tempMask.ellipseMode(CENTER);
+		tempMask.ellipse(_msize / 2, _msize / 2, _msize);
+		outimg.mask(tempMask);
+		tempMask.remove();
+
+		mainCanvas.blendMode(BLEND);
+		
+
+		//mainCanvas.ellipse(_x,_y,_msize);
+		mainCanvas.image(outimg, _x - _msize / 2, _y - _msize / 2);
+
+
+		if (status.show_TX30)
+			maskCanvas.image(imagesLayers[status.years + '-TX30-RCP45'], 0, 0, w, h);
+		if (status.show_PR95PERC)
+			maskCanvas.image(imagesLayers[status.years + '-PR95PERC-RCP45'], 0, 0, w, h);
+		if (status.show_PRCPTOT)
+			maskCanvas.image(imagesLayers[status.years + '-PRCPTOT-RCP45'], 0, 0, w, h);
 
 		if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
 
@@ -327,7 +469,7 @@ function updateLayers(_x, _y, _showPanel) {
 
 			//first graph
 			var TX30_data = d3.nest()
-				.key(function(e){ return e.proiezione})
+				.key(function(e) { return e.proiezione })
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['TX30']);
 
@@ -336,15 +478,15 @@ function updateLayers(_x, _y, _showPanel) {
 
 			paths1.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.red : graphVars.lightGray;})
-				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.red : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths1)
 				.transition()
-				.attr("d", function(d){return area(d.values)});
+				.attr("d", function(d) { return area(d.values) });
 
-			axisBottom1.selectAll('.tick text').style('fill',function(d){
+			axisBottom1.selectAll('.tick text').style('fill', function(d) {
 				return d == status.years ? graphVars.black : graphVars.gray;
-			}).style('font-weight',function(d){
+			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
 			})
 
@@ -358,13 +500,13 @@ function updateLayers(_x, _y, _showPanel) {
 				.attr("height", y(0) + 20)
 
 			//first text
-			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) +'.').style('opacity', 1);
+			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) + '.').style('opacity', 1);
 
 			//second graph
 			var PR95PERC_data = d3.nest()
-				.key(function(e){ return e.proiezione})
+				.key(function(e) { return e.proiezione })
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['PR95PERC']);
 
@@ -373,11 +515,11 @@ function updateLayers(_x, _y, _showPanel) {
 
 			paths2.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.blue : graphVars.lightGray;})
-				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.blue : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths2)
 				.transition()
-				.attr("d", function(d){return area(d.values)});
+				.attr("d", function(d) { return area(d.values) });
 
 			g2.append("rect")
 				.classed("graph-rect", true)
@@ -389,13 +531,13 @@ function updateLayers(_x, _y, _showPanel) {
 				.attr("height", y(0) + 20)
 
 			//second text
-			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').style('opacity', 1);
 
 			//third graph
 			var PRCPTOT_data = d3.nest()
-				.key(function(e){ return e.proiezione})
+				.key(function(e) { return e.proiezione })
 				.sortKeys(d3.descending)
 				.entries(prov_data[selectedProvince]['PRCPTOT']);
 
@@ -404,11 +546,11 @@ function updateLayers(_x, _y, _showPanel) {
 
 			paths3.enter()
 				.append("path")
-				.attr("fill", function(d){return d.key == 'RCP85' ? graphVars.yellow : graphVars.lightGray;})
-				.style("opacity", function(d){return d.key == 'RCP85' ? 1 : .8})
+				.attr("fill", function(d) { return d.key == 'RCP85' ? graphVars.yellow : graphVars.lightGray; })
+				.style("opacity", function(d) { return d.key == 'RCP85' ? 1 : .8 })
 				.merge(paths3)
 				.transition()
-				.attr("d", function(d){return area3(d.values)});
+				.attr("d", function(d) { return area3(d.values) });
 
 			g3.append("rect")
 				.classed("graph-rect", true)
@@ -420,8 +562,8 @@ function updateLayers(_x, _y, _showPanel) {
 				.attr("height", y3(-410) + 20)
 
 			//third text
-			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d){ return d.anno == status.years})[0].valore);
-			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d){ return d.anno == status.years})[0].valore);
+			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
+			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').style('opacity', 1);
 
 			d3.select('#spiega').style("opacity", 1e-6);
@@ -432,112 +574,82 @@ function updateLayers(_x, _y, _showPanel) {
 		d3.select('#spiega').style("opacity", 1);
 		d3.select('#areachart').style("opacity", 1e-6);
 	}
-
-
 }
 
-function GeoLayer(_data, _maxval, _map, _width, _height) {
-	//
-	this.color = '#ff0000';
-	this.maxVal = _maxval;
-	this.width = _width;
-	this.height = _height;
-
-	var points = [];
-	var layer = createGraphics(this.width, this.height);
-	this.rendered = createImage(this.width, this.height);
-
-	// prepare data
-	this.init = function(_year, _variable, _scenario) {
-		//flush points
-		points = [];
-		// test un po' stupidino
-		var p1 = myMap.latLngToPixel(_data[0].lat, _data[0].lon);
-		var p2 = myMap.latLngToPixel(_data[1].lat, _data[1].lon);
-		var distance = (p1.x - p2.x) / 5.55; //formula magica, ottini distanza tra punti
-
-		var maxVal = Math.sqrt(Math.abs(this.maxVal));
-
-		_data.forEach(function(item) {
-
-			const latitude = item.lat;
-			const longitude = item.lon;
-
-			// Transform lat/lng to pixel position
-			const pos = _map.latLngToPixel(latitude, longitude);
-
-			// Get the variables
-			let size = Math.sqrt(Math.abs(item[_year][_variable][_scenario]));
-
-			size = map(size, 0, maxVal, 0, distance);
-
-			//save the point
-			var p = {
-				'x': pos.x,
-				'y': pos.y,
-				'size': size
-			};
-			//add a second size if scenario is RCP45
-			if (_scenario == 'RCP45') {
-				p.outsize = map(Math.sqrt(Math.abs(item[_year][_variable]['RCP85'])), 0, maxVal, 0, distance);
-				p.innersize = map(Math.sqrt(Math.abs(item[_year][_variable]['RCP85'] - item[_year][_variable]['RCP45'])), 0, maxVal, 0, distance);
-			}
-			points.push(p);
-		})
+function createPallozzi(_variable, _color) {
+	var maxVals = {
+		TX30: 74,
+		PR95PERC: 87,
+		PRCPTOT: -410
 	}
-	this.draw = function() {
+	//create the points
+	points = [];
+
+	// formula magica, ottieni distanza tra punti
+	var p1 = myMap.latLngToPixel(fullData.values[0].lat, fullData.values[0].lon);
+	var p2 = myMap.latLngToPixel(fullData.values[1].lat, fullData.values[1].lon);
+	var distance = (p1.x - p2.x) / 5.55;
+
+	var maxVal = Math.sqrt(Math.abs(maxVals[_variable]));
+
+	fullData.values.forEach(function(item) {
+
+		const latitude = item.lat;
+		const longitude = item.lon;
+
+		// Transform lat/lng to pixel position
+		const pos = myMap.latLngToPixel(latitude, longitude);
+
+		//save the point
+		var p = {
+			'x': pos.x,
+			'y': pos.y,
+			'item': item
+		};
+		points.push(p);
+	})
+
+	//now create all the images
+	var ya = ["2011-2040", "2041-2070", "2071-2100"].forEach(function(_year) {
+		var image_RCP85 = createImage(w, h);
+		var image_RCP45 = createImage(w, h);
+		var layer = createGraphics(w, h);
+		//layer.id("layer" + "-" + _year +"-"+ _variable+"-"+ _scenario)
 		layer.clear();
 		//layer.background('white');
 		layer.noStroke();
 		layer.ellipseMode(CENTER);
-		layer.fill(this.color);
-		var c = this.color;
+		layer.fill(_color);
+
+		//draw rcp85
 		points.forEach(function(p) {
-			if(p.outsize != null){
-				layer.fill(c);
-				layer.ellipse(p.x, p.y, p.innersize);
-				// layer.fill(graphVars.lightGray);
-				// layer.ellipse(p.x, p.y, p.size);
-			} else {
-			layer.ellipse(p.x, p.y, p.size, p.size);
-			}
+			//calculate size
+			let size = Math.sqrt(Math.abs(p.item[_year][_variable]['RCP85']));
+			size = map(size, 0, maxVal, 0, distance);
+
+			layer.ellipse(p.x, p.y, size);
 		});
 
-		this.rendered = createImage(this.width, this.height);
-
-		this.rendered.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
-
-		return this.rendered;
-	}
-
-	this.mask = function(_mx, _my, _msize) {
+		image_RCP85.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
 		layer.clear();
-		var outimg = createImage(this.width, this.height);
-		layer.image(this.rendered, 0, 0);
-		layer.ellipseMode(CENTER);
-		layer.noStroke();
-		layer.fill(255);
-		layer.ellipse(_mx, _my, _msize);
-		outimg.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
+		//draw rcp45
+		points.forEach(function(p) {
+			//calculate size
+			let size = Math.sqrt(Math.abs(p.item[_year][_variable]['RCP85'] - p.item[_year][_variable]['RCP45']));
+			size = map(size, 0, maxVal, 0, distance);
 
-		image(outimg, 0, 0);
+			layer.ellipse(p.x, p.y, size);
+		});
 
-		return outimg;
-	}
-	this.invertMask = function(_mx, _my, _msize) {
-		var outimg = createImage(_msize, _msize);
-		outimg.copy(this.rendered, _mx - _msize / 2, _my - _msize / 2, _msize, _msize, 0, 0, _msize, _msize)
+		image_RCP45.copy(layer, 0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
 
-		var tempMask = createGraphics(_msize, _msize);
-		tempMask.ellipseMode(CENTER);
-		tempMask.ellipse(_msize / 2, _msize / 2, _msize);
-		outimg.mask(tempMask);
-		tempMask.remove();
+		layer.remove();
 
-		image(outimg, _mx - _msize / 2, _my - _msize / 2);
+		//push to the main object
+		imagesLayers[_year + "-" + _variable + "-RCP85"] = image_RCP85;
+		imagesLayers[_year + "-" + _variable + "-RCP45"] = image_RCP45;
+	})
 
-		return outimg;
-	}
 }
 
 function ShapeFileLayer(_geoJson, _map, _width, _height) {
@@ -617,6 +729,7 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 
 		return this.image;
 	}
+
 	this.hitTest = function(_x, _y) {
 
 		for (var shape of shapes) {
@@ -628,8 +741,39 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 				}
 			}
 		}
-
 		return null;
+	}
+
+	this.drawInFront = function(_mx, _my) {
+		layer.clear();
+		layer.image(this.image, 0, 0);
+		//perform hittest
+		var selected = this.hitTest(_mx, _my);
+		
+		if (selected != null) {
+			//draw the selected one
+			layer.noFill();
+			layer.strokeWeight(2);
+			layer.stroke(0);
+
+			selected.polygons.forEach(function(poly) {
+				layer.beginShape();
+				//now draw the shape
+				poly.forEach(function(p) {
+					layer.vertex(Math.round(p.x), Math.round(p.y));
+				})
+				layer.endShape();
+			})
+		}
+		//return as image
+		var outimg = createImage(layer.width, layer.height);
+		outimg.copy(0, 0, layer.width, layer.height, 0, 0, layer.width, layer.height);
+
+		//maskCanvas.fill('red');
+		maskCanvas.ellipse(_mx,_my,10);
+		maskCanvas.image(outimg, 0, 0, layer.width, layer.height);
+
+		return selected;
 	}
 
 	//hit test
@@ -674,13 +818,13 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 
 function touchStarted() {
 	if (touches.length > 0) {
-		updateLayers(touches[0].x, touches[0].y, true);
+		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY, true);
 	}
 }
 
 function touchMoved() {
 	if (touches.length > 0) {
-		updateLayers(touches[0].x, touches[0].y, true);
+		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY, true);
 	}
 }
 
