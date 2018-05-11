@@ -304,7 +304,7 @@ function initializeButton(_btn_selector, _target_variable) {
 
 			status[_target_variable] = button.selected;
 
-			console.log(status);
+			// console.log(status);
 		}
 	};
 	button.elt.self = button;
@@ -315,7 +315,7 @@ var selectedProvince = '';
 
 // variables for all the graphs
 
-var margin = { top: 25, right: 120, bottom: 25, left: 80 };
+var margin = { top: 25, right: 90, bottom: 25, left: 40 };
 var sw = +d3.select('#graph_01').style("width").slice(0, -2) - margin.left - margin.right;
 var sh = +d3.select('#graph_01').style("height").slice(0, -2) - margin.top - margin.bottom;
 
@@ -397,7 +397,7 @@ g3.append("g")
 function updateLayers(_x, _y, _showPanel) {
 	//clear canvas
 	mainCanvas.clear();
-
+	
 	//draw background
 	mainCanvas.image(italy_layer.image, 0, 0, w, h);
 	//prov_layer
@@ -408,23 +408,23 @@ function updateLayers(_x, _y, _showPanel) {
 	if (status.show_TX30) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-TX30-RCP85'], 0, 0, w, h);
-		d3.select('#graph_01_container').style("display", "inline");
+		// d3.select('#graph_01_container').style("display", "inline");
 	} else {
-		d3.select('#graph_01_container').style("display", "none");
+		// d3.select('#graph_01_container').style("display", "none");
 	}
 	if (status.show_PR95PERC) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-PR95PERC-RCP85'], 0, 0, w, h);
-		d3.select('#graph_02_container').style("display", "inline");
+		// d3.select('#graph_02_container').style("display", "inline");
 	} else {
-		d3.select('#graph_02_container').style("display", "none");
+		// d3.select('#graph_02_container').style("display", "none");
 	}
 	if (status.show_PRCPTOT) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-PRCPTOT-RCP85'], 0, 0, w, h);
-		d3.select('#graph_03_container').style("display", "inline");
+		// d3.select('#graph_03_container').style("display", "inline");
 	} else {
-		d3.select('#graph_03_container').style("display", "none");
+		// d3.select('#graph_03_container').style("display", "none");
 	}
 
 	//update panel
@@ -432,8 +432,8 @@ function updateLayers(_x, _y, _showPanel) {
 
 		maskCanvas.clear();
 
-		var newprov = prov_layer.drawInFront(_x, _y)
-		console.log(newprov.properties.DEN_CMPRO);
+		var newprov = prov_layer.drawInFront(_x, _y);
+		// console.log(newprov.properties.DEN_CMPRO);
 		maskCanvas.image(prov_layer.image, 0, 0, w, h);
 
 		maskCanvas.blendMode(MULTIPLY);
@@ -571,13 +571,13 @@ function updateLayers(_x, _y, _showPanel) {
 			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').style('opacity', 1);
 
-			d3.select('#spiega').style("opacity", 1e-6);
-			d3.select('#areachart').style("opacity", 1);
+			// d3.select('#spiega').style("opacity", 1e-6);
+			// d3.select('#areachart').style("opacity", 1);
 		}
 	} else {
 
-		d3.select('#spiega').style("opacity", 1);
-		d3.select('#areachart').style("opacity", 1e-6);
+		// d3.select('#spiega').style("opacity", 1);
+		// d3.select('#areachart').style("opacity", 1e-6);
 	}
 }
 
