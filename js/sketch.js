@@ -119,21 +119,25 @@ function setup() {
 //initialize d3 buttons
 d3.selectAll('.timeline_button')
 	.on('click', function() {
-		d3.event.preventDefault();
+		// d3.event.preventDefault();
 		var activeClass = "selected";
 
 		d3.selectAll(".timeline_button")
 			.classed(activeClass, false);
 		d3.select(this).classed(activeClass, true)
+		var highlighter = d3.select('#timeline_2011_2040 path');
 		if (this.id == 'timeline_2011_2040') {
+			highlighter.transition().duration(500).attr("transform", "translate(0,0)");
 			status.years = '2011-2040';
 			initMap(status.years);
 		}
 		if (this.id == 'timeline_2041_2070') {
+			highlighter.transition().duration(500).attr("transform", "translate(150,0)");
 			status.years = '2041-2070';
 			initMap(status.years);
 		}
 		if (this.id == 'timeline_2071_2100') {
+			highlighter.transition().duration(500).attr("transform", "translate(305,0)");
 			status.years = '2071-2100';
 			initMap(status.years);
 		}

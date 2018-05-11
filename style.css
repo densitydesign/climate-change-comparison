@@ -12,33 +12,51 @@ html,
 body {
 	margin: 0;
 	padding: 0;
+    font-family: "Work Sans", sans-serif;
+	font-size: 14px;
+	color: var(--black);
+}
+
+h1, h2, h3, h4 {
+	font-weight: normal;
 }
 
 #container {
-	width: 1920px;
-	height: 1080px;
+	width: 1080px;
+	height: 1920px;
 	/*border: 1px dashed;*/
 	background-image: url("./assets/sfondo.jpg");
 	background-size: 100%;
 }
 
-#left-panel {
-	width: 380px;
-	float: left;
-	margin-top: 35px;
-	margin-left: 35px;
+/* TOP PANEL STYLES */
+
+#top-panel {
+	width: calc(100% - 70px);
+	padding: 0 35px 35px;
 }
 
-.intro {
-	height: 30px;
-	font-family: Work Sans;
-	width: 300px;
+.interaction-header {
+	text-transform: uppercase;
+	font-size: 1rem;
+	text-align: center;
+	margin: 0;
+	padding-top: 35px;
+}
+
+.buttons-container {
+    display: flex;
+	justify-content: space-between;
+}
+
+/* button styles */
+.riq {
+	margin-top: 10px;
 }
 
 .title {
-	font-family: Work Sans;
-	font-size: 30px;
-	margin-top: 5px;
+	font-size: 2rem;
+	margin: 5px 0 2px;
 }
 
 .scrittaMagenta {
@@ -54,245 +72,94 @@ body {
 }
 
 .subtitle {
-	font-family: Work Sans;
-	color: black;
-	font-size: 12px;
+	font-size: 0.9rem;
+	margin: 0;
 }
 
-
-.left-toggle {
-	outline: 2px solid;
-	height: 210px;
-	width: 210px;
-	margin-left: 50px;
-	margin-top: 15px
+.btn-toggle {
+	outline: 2px solid var(--lightGrey);
+	height: 240px;
+	width: 240px;
+	margin-top: 15px;
+	background-size: 100%;
 }
-
-.riq {
-	/*	outline: 1px solid;*/
-	height: 320px;
-	width: 320px;
-	margin-top: 10px;
+.btn-toggle.selected {
+	outline-width: 8px;
 }
 
 #toggle-1 {
-	outline-color: var(--lightGrey);
-	margin-top: 15px;
-	height: 210px;
-	width: 210px;
 	background-image: url("./assets/bottone1.jpg");
-	background-size: 100%;
 }
 
 #toggle-1.selected {
 	outline-color: var(--red);
-	outline-width: 8px;
-	margin-top: 15px;
 	background-image: url("./assets/bottone1clicked.jpg");
-	background-size: 100%;
-	background-color: var(--red);
 }
 
 #toggle-2 {
-	outline-color: var(--lightGrey);
-	outline-width: 2px;
-	margin-top: 15px;
 	background-image: url("./assets/bottone3.jpg");
-	background-size: 100%;
-	background-color: var(--blue);
 }
 
 #toggle-2.selected {
 	outline-color: var(--blue);
-	outline-width: 8px;
-	margin-top: 15px;
 	background-image: url("./assets/bottone3clicked.jpg");
-	background-size: 100%;
 }
 
 #toggle-3 {
-	outline-color: var(--lightGrey);
-	margin-top: 15px;
 	background-image: url("./assets/bottone2.jpg");
-	background-size: 100%;
-	background-color: var(--yellow);
 }
 
 #toggle-3.selected {
 	outline-color: var(--yellow);
-	outline-width: 8px;
-	margin-top: 15px;
 	background-image: url("./assets/bottone2clicked.jpg");
-	background-size: 100%;
 }
-
 
 .legenda {
 	margin-top: 15px;
-	margin-left: 0px;
-	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
 	justify-content: center;
+	width: 240px;
 }
 
-.selected {
+.legenda img {
+	margin: 0 6px;
+}
+
+/* .selected {
 	outline: 10px dashed #000;
 	outline-offset: -10px;
-}
+} */
 
-#visualization {
-	width: 960px;
-	height: 100%;
-	outline-offset: -1px;
-	margin-left: 40px;
-	float: left;
-}
-
-
-/*#mapZero {
-	height: 960px;
-	width: 960px;
-	margin-top:15px;
-	background-image: url("./assets/contorni.png");
-	background-size: 100%;
-	background-color: red;
-}
-
-#mappa1 {
-	height: 960px;
-	width: 960px;
-	margin-top:15px;
-	background-image: url("./assets/mappa1.png");
-	background-size: 100%;
-}
-
-#mappa2 {
-	height: 960px;
-	width: 960px;
-	margin-top:15px;
-	background-image: url("./assets/mappa2.png");
-	background-size: 100%;
-}
-
-#mappa3 {
-	height: 960px;
-	width: 960px;
-	margin-top:15px;
-	background-image: url("./assets/mappa3.png");
-	background-size: 100%;
-}*/
-
+/* timeline styles */
 #timeline {
-	height: 90px;
-	margin-left: 200px;
+	display: flex;
+	justify-content: center;
 }
-
-.line {
-	height: 50px;
-	width: 850px;
+.timeline_button text {
+	font-size: 0.9rem;
 }
-
-
-/*linea del tempo*/
-
-.cls-1 {
-	fill: #fff;
-}
-
-.cls-2,
-.cls-7 {
+#timeline_2011_2040 path {
+	position: relative;
+	left: 0;
 	fill: none;
+	stroke: #454545;
+	stroke-width: 2px;
 	stroke-miterlimit: 10;
 }
 
-.cls-2 {
-	stroke: var(--lightGrey);
-	stroke-linecap: round;
-	stroke-width: 4px;
-}
-
-.cls-3,
-.cls-5,
-.cls-6 {
-	fill: var(--darkGrey);
-}
-
-.cls-4 {
-	font-size: 5.16px;
-	fill: var(--lightGrey);
-}
-
-.cls-4,
-.cls-5 {
-	font-family: Work Sans;
-}
-
-.cls-5 {
-	font-size: 6.89px;
-}
-
-.cls-6 {
-	opacity: 0.2;
-}
-
-.cls-7 {
-	stroke: var(--darkGrey);
-}
-
-.right-panel {
-	height: 100%;
-	outline-offset: -1px;
-	float: right;
-	margin-right: 70px;
-}
-
-.biancoDestra {
-	width: 390px;
-	height: 880px;
-	outline: 2px solid var(--lightGrey);
-	background: white;
-	margin-top: 100px;
+/* MAP STYLES */
+#visualization {
 	position: relative;
 }
 
-.testo {
-	width: 330px;
-	font-family: Work Sans;
-	font-size: 15px;
-	line-height: 30px;
-	margin-left: 30px;
-	padding-top: 25px;
+/* GRAPHS STYLES */
+.bianco-container {
+	outline: 2px solid var(--lightGrey);
+	background: white;
 }
 
-.testo2 {
-	width: 330px;
-	font-family: Work Sans;
-	font-size: 13px;
-	line-height: 25px;
-	margin-left: 30px;
-}
-
-.testoSotto {
-	width: 390px;
-	font-family: Work Sans;
-	font-size: 7px;
-	line-height: 17px;
-	margin-left: 0px;
-	margin-top: 15px;
-}
-
-.timeline_button {
-	opacity: 0;
-}
-
-.timeline_button.selected {
-	opacity: 1;
-}
-
-#spiega {
+#visualization .bianco-container {
+	display: none;
 }
 
 #areachart {
@@ -309,14 +176,14 @@ body {
 }
 
 #areachart p {
-	font-family: Work Sans;
+	font-family: "Work Sans", sans-serif;
 	font-size: 14px;
 	/*line-height: 30px;*/
 	margin: 0 15px 5px;
 }
 
 p#nomeprovincia {
-	font-family: Work Sans;
+	font-family: "Work Sans", sans-serif;
 	font-size: 15px;
 	text-transform: uppercase;
 	margin: 20px 15px 5px;
@@ -325,4 +192,26 @@ p#nomeprovincia {
 	fill: none;
 	stroke: var(--black);
 	stroke-width: 2px;
+}
+
+/* BOTTOM PANEL STYLES */
+
+.bottom-panel {
+	padding: 0 35px;
+}
+
+#spiega {
+	padding: 25px;
+	line-height: 1.7;
+	column-count: 2;
+}
+
+#spiega p {
+	margin: 0 0 5px;
+}
+
+.testoSotto {
+	font-size: 0.7rem;
+	padding: 10px 0 0 25px;
+	margin: 0;
 }
