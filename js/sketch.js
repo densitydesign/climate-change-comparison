@@ -66,16 +66,11 @@ let timeline_btns = [];
 //initialize svg
 svg = d3.select("#svg_mask").append("svg")
 	.attr("width", w + "px")
-	.attr("height", h + "px")
-	//.append("g")
-
-// var under = svg.append("g")
-
-// var container = svg.append("g")
+	.attr("height", h + "px");
 
 var svg_overlay = d3.select("#svg_overlay").append("svg")
 	.attr("width", w + "px")
-	.attr("height", h + "px")
+	.attr("height", h + "px");
 
 var masked = svg.append("g")
 	.attr('mask', 'url(#hole-mask)');
@@ -85,7 +80,7 @@ masked.append('rect')
 	.attr('y',0)
 	.attr("width", w + "px")
 	.attr("height", h + "px")
-	.style("fill","white")
+	.style("fill","white");
 
 // // add foreign object to svg
 // // https://gist.github.com/mbostock/1424037
@@ -350,29 +345,6 @@ d3.selectAll('.btn-toggle')
 			updateLayers(myTouches.x, myTouches.y, true);
 		}
 	});
-
-// this function allows you to bind a DIV item to the status of a variable
-// function initializeButton(_btn_selector, _target_variable) {
-// 	var button = select(_btn_selector);
-// 	button.selected = false;
-// 	button.switch = function(event) {
-// 		if (event.type == "touchend") {
-// 			if (button.selected) {
-// 				button.removeClass('selected');
-// 			} else {
-// 				button.addClass('selected');
-// 			}
-//
-// 			button.selected = !button.selected
-//
-// 			status[_target_variable] = button.selected;
-//
-// 			// console.log(status);
-// 		}
-// 	};
-// 	button.elt.self = button;
-// 	button.touchEnded(button.switch);
-// }
 
 var selectedProvince = '';
 
@@ -1043,20 +1015,3 @@ function ShapeFileLayer(_geoJson, _map, _width, _height) {
 	this.createPolygons();
 	//
 }
-
-// function touchStarted() {
-// 	if (touches.length > 0) {
-// 		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY - maskCanvas.elt.getBoundingClientRect().y, true);
-// 	}
-// }
-//
-// function touchMoved() {
-// 	if (touches.length > 0) {
-// 		updateLayers(touches[0].winX - maskCanvas.elt.getBoundingClientRect().x, touches[0].winY - maskCanvas.elt.getBoundingClientRect().y, true);
-// 	}
-// }
-//
-// function touchEnded() {
-// 	updateLayers(0, 0, false);
-// 	selectedProvince = '';
-// }

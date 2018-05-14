@@ -164,37 +164,6 @@ h1, h2, h3, h4 {
 	margin: 0;
 	padding: 10px 0;
 }
-/* .btn-toggle.selected {
-	outline-width: 8px;
-}
-
-#toggle-1 {
-	background-image: url("./assets/bottone1.jpg");
-}
-
-#toggle-1.selected {
-	outline-color: var(--red);
-	background-image: url("./assets/bottone1clicked.jpg");
-}
-
-#toggle-2 {
-	background-image: url("./assets/bottone3.jpg");
-}
-
-#toggle-2.selected {
-	outline-color: var(--blue);
-	background-image: url("./assets/bottone3clicked.jpg");
-}
-
-#toggle-3 {
-	background-image: url("./assets/bottone2.jpg");
-}
-
-#toggle-3.selected {
-	outline-color: var(--yellow);
-	background-image: url("./assets/bottone2clicked.jpg");
-} */
-
 
 /* timeline styles */
 #timeline {
