@@ -167,6 +167,22 @@ d3.select('#map').on('touchstart', function(d) {
 		}
 	});
 
+d3.select('#top-panel').on('touchend', function(d) {
+	d3.event.preventDefault();
+	if (d3.event.touches.length == 0) {
+		myTouches = {};
+		onEnd();
+	}
+});
+
+d3.select('.bottom-panel').on('touchend', function(d) {
+	d3.event.preventDefault();
+	if (d3.event.touches.length == 0) {
+		myTouches = {};
+		onEnd();
+	}
+});
+
 function onStart() {
 	holeMaskCircles = holeMaskCircles.data([myTouches], function(d){ return d.identifier;})
 	holeMaskCircles.exit().remove();
