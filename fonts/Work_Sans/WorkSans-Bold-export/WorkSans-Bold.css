@@ -1,0 +1,7 @@
+
+@font-face {
+    font-family:"Work Sans Bold";
+    src:url("WorkSans-Bold.woff2") format("woff2"),url("WorkSans-Bold.woff") format("woff"),url("WorkSans-Bold.otf") format("opentype");
+    font-style:normal;font-weight:400;
+}
+        
