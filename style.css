@@ -160,9 +160,14 @@ h1, h2, h3, h4 {
 
 .btn-text {
 	color: var(--black);
-	font-size: 0.7rem;
+	font-size: 0.8rem;
 	margin: 0;
 	padding: 10px 0;
+	transition: color 0.4s ease;
+}
+
+.btn-toggle.selected .btn-text {
+	color: var(--white);
 }
 
 /* timeline styles */
@@ -186,6 +191,18 @@ h1, h2, h3, h4 {
 	stroke: var(--darkGrey);
 	stroke-width: 1.5px;
 	stroke-miterlimit: 10;
+	transform: translate(0,0);
+	transition: transform 0.3s ease;
+}
+
+#timeline_2011_2040 path.position1 {
+	transform: translate(0,0);
+}
+#timeline_2011_2040 path.position2 {
+	transform: translate(150px,0);
+}
+#timeline_2011_2040 path.position3 {
+	transform: translate(305px,0);
 }
 
 /* GRAPHS STYLES */
@@ -240,6 +257,17 @@ h1, h2, h3, h4 {
 	fill: none;
 	stroke: var(--black);
 	stroke-width: 1.5px;
+	transform: translate(0,0);
+	transition: transform 0.3s ease;
+}
+.graph-rect.position1 {
+	transform: translate(0,0);
+}
+.graph-rect.position2 {
+	transform: translate(85px,0);
+}
+.graph-rect.position3 {
+	transform: translate(171px,0);
 }
 
 .scrittaMagentaChiaro {

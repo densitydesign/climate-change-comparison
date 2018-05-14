@@ -310,15 +310,24 @@ d3.selectAll('.timeline_button')
 		var highlighter = d3.select('#timeline_2011_2040 path');
 		switch (this.id) {
 			case 'timeline_2011_2040':
-				highlighter.transition().attr("transform", "translate(0,0)");
+				// highlighter.transition().attr("transform", "translate(0,0)");
+				highlighter.classed('position1', true)
+					.classed('position2', false)
+					.classed('position3', false);
 				status.years = '2011-2040';
 				break;
 			case 'timeline_2041_2070':
-				highlighter.transition().attr("transform", "translate(150,0)");
+				// highlighter.transition().attr("transform", "translate(150,0)");
+				highlighter.classed('position1', false)
+					.classed('position2', true)
+					.classed('position3', false);
 				status.years = '2041-2070';
 				break;
 			case 'timeline_2071_2100':
-				highlighter.transition().attr("transform", "translate(305,0)");
+				// highlighter.transition().attr("transform", "translate(305,0)");
+				highlighter.classed('position1', false)
+					.classed('position2', false)
+					.classed('position3', true);
 				status.years = '2071-2100';
 				break;
 		}
@@ -380,7 +389,7 @@ axisBottom1.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("st
 
 var axisRight1 = g1.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
-axisRight1.call(d3.axisRight(y).tickValues([0,20,40,60,80]).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+axisRight1.call(d3.axisRight(y).tickValues([0,20,40,60,80]).tickSize(-sw - 12).tickPadding(25).tickFormat(function(d) {
 	return d > 0 ? "+ " + d + " giorni" : d + " giorni";
 }));
 axisRight1.select(".domain").remove();
@@ -413,7 +422,7 @@ axisBottom2.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("st
 
 var axisRight2 = g2.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
-axisRight2.call(d3.axisRight(y2).tickValues([-10,0,20,40,60]).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+axisRight2.call(d3.axisRight(y2).tickValues([-10,0,20,40,60]).tickSize(-sw - 12).tickPadding(25).tickFormat(function(d) {
 	return d > 0 ? "+ " + d + " mm" : (d + " mm").replace(/-/,'- ');
 }));
 axisRight2.select(".domain").remove();
@@ -445,7 +454,7 @@ axisBottom3.selectAll(".tick line").attr("stroke", graphVars.lightGray).attr("st
 
 var axisRight3 = g3.append("g")
 	.attr("transform", "translate(" + sw + ", 0)");
-axisRight3.call(d3.axisRight(y3).tickValues([-320,-240,-160,-80,0,40]).tickSize(-sw - 12).tickPadding(14).tickFormat(function(d) {
+axisRight3.call(d3.axisRight(y3).tickValues([-320,-240,-160,-80,0,40]).tickSize(-sw - 12).tickPadding(25).tickFormat(function(d) {
 	return d > 0 ? "+ " + d + " mm" : (d + " mm").replace(/-/,'- ');
 }));
 axisRight3.select(".domain").remove();
@@ -547,12 +556,20 @@ function updateLayers(_x, _y, _showPanel) {
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
+				.attr("x", x('2011-2040') - 20)
 				.attr("y", y(85))
 				.attr("width", 40)
 				.attr("height", y(0) + 13)
 				.merge(graphRect1)
-				.transition()
-				.attr("x", x(status.years) - 20);
+				.classed('position1', function(){
+					return status.years == '2011-2040';
+				})
+				.classed('position2', function(){
+					return status.years == '2041-2070';
+				})
+				.classed('position3', function(){
+					return status.years == '2071-2100';
+				});
 
 			//first text
 			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
@@ -590,12 +607,20 @@ function updateLayers(_x, _y, _showPanel) {
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
+				.attr("x", x('2011-2040') - 20)
 				.attr("y", y2(65))
 				.attr("width", 40)
 				.attr("height", y2(-8) + 18)
 				.merge(graphRect2)
-				.transition()
-				.attr("x", x(status.years) - 20);
+				.classed('position1', function(){
+					return status.years == '2011-2040';
+				})
+				.classed('position2', function(){
+					return status.years == '2041-2070';
+				})
+				.classed('position3', function(){
+					return status.years == '2071-2100';
+				});
 
 			//second text
 			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
@@ -634,12 +659,20 @@ function updateLayers(_x, _y, _showPanel) {
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
+				.attr("x", x('2011-2040') - 20)
 				.attr("y", y3(55))
 				.attr("width", 40)
 				.attr("height", y3(-320) + 15)
 				.merge(graphRect3)
-				.transition()
-				.attr("x", x(status.years) - 20);
+				.classed('position1', function(){
+					return status.years == '2011-2040';
+				})
+				.classed('position2', function(){
+					return status.years == '2041-2070';
+				})
+				.classed('position3', function(){
+					return status.years == '2071-2100';
+				});
 
 			//third text
 			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
@@ -678,12 +711,20 @@ function updateLayers(_x, _y, _showPanel) {
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
+				.attr("x", x('2011-2040') - 20)
 				.attr("y", y(85))
 				.attr("width", 40)
 				.attr("height", y(0) + 13)
 				.merge(graphRect1)
-				.transition()
-				.attr("x", x(status.years) - 20);
+				.classed('position1', function(){
+					return status.years == '2011-2040';
+				})
+				.classed('position2', function(){
+					return status.years == '2041-2070';
+				})
+				.classed('position3', function(){
+					return status.years == '2071-2100';
+				});
 
 			d3.select("#desc_01").classed('visible', false);
 
@@ -713,12 +754,20 @@ function updateLayers(_x, _y, _showPanel) {
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
+				.attr("x", x('2011-2040') - 20)
 				.attr("y", y2(65))
 				.attr("width", 40)
 				.attr("height", y2(-8) + 18)
 				.merge(graphRect2)
-				.transition()
-				.attr("x", x(status.years) - 20);
+				.classed('position1', function(){
+					return status.years == '2011-2040';
+				})
+				.classed('position2', function(){
+					return status.years == '2041-2070';
+				})
+				.classed('position3', function(){
+					return status.years == '2071-2100';
+				});
 
 			d3.select("#desc_02").classed('visible', false);
 
@@ -749,12 +798,20 @@ function updateLayers(_x, _y, _showPanel) {
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
+				.attr("x", x('2011-2040') - 20)
 				.attr("y", y3(55))
 				.attr("width", 40)
 				.attr("height", y3(-320) + 15)
 				.merge(graphRect3)
-				.transition()
-				.attr("x", x(status.years) - 20);
+				.classed('position1', function(){
+					return status.years == '2011-2040';
+				})
+				.classed('position2', function(){
+					return status.years == '2041-2070';
+				})
+				.classed('position3', function(){
+					return status.years == '2071-2100';
+				});
 
 			d3.select("#desc_03").classed('visible', false);
 
