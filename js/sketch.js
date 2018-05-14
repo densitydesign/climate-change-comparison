@@ -130,17 +130,20 @@ d3.select('#map').on('touchstart', function(d) {
 	})
 	.on('touchmove', function(d) {
 		d3.event.preventDefault();
-		myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
-		myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
-		myTouches.identifier = d3.event.touches[0].identifier;
-		onMove();
+		if (status.show_TX30 || status.show_PR95PERC || status.show_PRCPTOT) {
+			myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
+			myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
+			myTouches.identifier = d3.event.touches[0].identifier;
+			onMove();
+		}
 	})
 	.on('touchend', function(d) {
 		d3.event.preventDefault();
 		if (d3.event.touches.length == 0) {
+			myTouches = {};
 			onEnd();
 		}
-	})
+	});
 
 function onStart() {
 	holeMaskCircles = holeMaskCircles.data([myTouches], function(d){ return d.identifier;})
@@ -283,31 +286,42 @@ d3.selectAll('.timeline_button')
 		d3.select(this).classed(activeClass, true);
 		d3.select(this).select('circle').transition().duration(350).ease(d3.easeBackOut).attr('r', 10);
 		var highlighter = d3.select('#timeline_2011_2040 path');
-		if (this.id == 'timeline_2011_2040') {
-			highlighter.transition().attr("transform", "translate(0,0)");
-			status.years = '2011-2040';
+		switch (this.id) {
+			case 'timeline_2011_2040':
+				highlighter.transition().attr("transform", "translate(0,0)");
+				status.years = '2011-2040';
+				break;
+			case 'timeline_2041_2070':
+				highlighter.transition().attr("transform", "translate(150,0)");
+				status.years = '2041-2070';
+				break;
+			case 'timeline_2071_2100':
+				highlighter.transition().attr("transform", "translate(305,0)");
+				status.years = '2071-2100';
+				break;
 		}
-		if (this.id == 'timeline_2041_2070') {
-			highlighter.transition().attr("transform", "translate(150,0)");
-			status.years = '2041-2070';
+
+		if (myTouches.x == undefined && !status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT) {
+			updateLayers(0, 0, false);
+		} else {
+			updateLayers(myTouches.x, myTouches.y, true);
 		}
-		if (this.id == 'timeline_2071_2100') {
-			highlighter.transition().attr("transform", "translate(305,0)");
-			status.years = '2071-2100';
-		}
-		updateLayers(0, 0, false);
 	});
 
 d3.selectAll('.btn-toggle')
 	.on('touchstart', function() {
 		var newStatus = this.getAttribute('data-variable');
 		var oldStatus = status[newStatus];
+		status[newStatus] = !oldStatus;
 		this.classList.toggle('selected');
 		d3.select('.legenda[data-variable= "'+ newStatus +'"]').node().classList.toggle('shown');
 		var $button = d3.select(this).select('p');
 		$button.text().includes('Mostra') ? $button.text("Rimuovi dalla mappa") : $button.text("Mostra sulla mappa");
-		status[newStatus] = !oldStatus;
-		updateLayers(0, 0, false);
+		if (myTouches.x == undefined && !status.show_TX30 && !status.show_PR95PERC && !status.show_PRCPTOT) {
+			updateLayers(0, 0, false);
+		} else {
+			updateLayers(myTouches.x, myTouches.y, true);
+		}
 	});
 
 // this function allows you to bind a DIV item to the status of a variable
@@ -494,11 +508,11 @@ function updateLayers(_x, _y, _showPanel) {
 		if (status.show_PRCPTOT)
 			maskCanvas.image(imagesLayers[status.years + '-PRCPTOT-RCP45'], 0, 0, w, h);
 
-		if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
+		// if (newprov != null && newprov.properties.DEN_CMPRO != selectedProvince) {
+		if (newprov != null) {
 
 			selectedProvince = newprov.properties.DEN_CMPRO;
 
-			d3.selectAll('.graph-rect').remove();
 
 			//title
 			d3.select('#nomeprovincia').html('Provincia di ' + selectedProvince);
@@ -524,16 +538,22 @@ function updateLayers(_x, _y, _showPanel) {
 				return d == status.years ? graphVars.black : graphVars.gray;
 			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
-			})
+			});
 
-			g1.append("rect")
+			var graphRect1 = g1.selectAll('.graph-rect')
+				.data([1]);
+
+			graphRect1.enter()
+				.append("rect")
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
-				.attr("x", x(status.years) - 20)
 				.attr("y", y(85))
 				.attr("width", 40)
 				.attr("height", y(0) + 13)
+				.merge(graphRect1)
+				.transition()
+				.attr("x", x(status.years) - 20);
 
 			//first text
 			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
@@ -561,16 +581,22 @@ function updateLayers(_x, _y, _showPanel) {
 				return d == status.years ? graphVars.black : graphVars.gray;
 			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
-			})
+			});
 
-			g2.append("rect")
+			var graphRect2 = g2.selectAll('.graph-rect')
+				.data([2]);
+
+			graphRect2.enter()
+				.append("rect")
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
-				.attr("x", x(status.years) - 20)
 				.attr("y", y2(65))
 				.attr("width", 40)
-				.attr("height", y2(-8) + 18);
+				.attr("height", y2(-8) + 18)
+				.merge(graphRect2)
+				.transition()
+				.attr("x", x(status.years) - 20);
 
 			//second text
 			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
@@ -598,16 +624,22 @@ function updateLayers(_x, _y, _showPanel) {
 				return d == status.years ? graphVars.black : graphVars.gray;
 			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
-			})
+			});
 
-			g3.append("rect")
+			var graphRect3 = g3.selectAll('.graph-rect')
+				.data([3]);
+
+			graphRect3.enter()
+				.append("rect")
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
-				.attr("x", x(status.years) - 20)
 				.attr("y", y3(55))
 				.attr("width", 40)
-				.attr("height", y3(-320) + 15);
+				.attr("height", y3(-320) + 15)
+				.merge(graphRect3)
+				.transition()
+				.attr("x", x(status.years) - 20);
 
 			//third text
 			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
@@ -636,16 +668,22 @@ function updateLayers(_x, _y, _showPanel) {
 				return d == status.years ? graphVars.black : graphVars.gray;
 			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
-			})
+			});
 
-			g1.append("rect")
+			var graphRect1 = g1.selectAll('.graph-rect')
+				.data([1]);
+
+			graphRect1.enter()
+				.append("rect")
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
-				.attr("x", x(status.years) - 20)
 				.attr("y", y(85))
 				.attr("width", 40)
 				.attr("height", y(0) + 13)
+				.merge(graphRect1)
+				.transition()
+				.attr("x", x(status.years) - 20);
 
 			d3.select("#desc_01").transition().style('opacity', 1e-6);
 
@@ -665,16 +703,22 @@ function updateLayers(_x, _y, _showPanel) {
 				return d == status.years ? graphVars.black : graphVars.gray;
 			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
-			})
+			});
 
-			g2.append("rect")
+			var graphRect2 = g2.selectAll('.graph-rect')
+				.data([2]);
+
+			graphRect2.enter()
+				.append("rect")
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
-				.attr("x", x(status.years) - 20)
 				.attr("y", y2(65))
 				.attr("width", 40)
-				.attr("height", y2(-8) + 18);
+				.attr("height", y2(-8) + 18)
+				.merge(graphRect2)
+				.transition()
+				.attr("x", x(status.years) - 20);
 
 			d3.select("#desc_02").transition().style('opacity', 1e-6);
 
@@ -694,20 +738,28 @@ function updateLayers(_x, _y, _showPanel) {
 				return d == status.years ? graphVars.black : graphVars.gray;
 			}).style('font-weight', function(d) {
 				return d == status.years ? "bold" : "normal";
-			})
+			});
 
-			g3.append("rect")
+			var graphRect3 = g3.selectAll('.graph-rect')
+				.data([3]);
+
+			graphRect3.enter()
+				.append("rect")
 				.classed("graph-rect", true)
 				.attr("rx", 20)
 				.attr("ry", 20)
-				.attr("x", x(status.years) - 20)
 				.attr("y", y3(55))
 				.attr("width", 40)
 				.attr("height", y3(-320) + 15)
+				.merge(graphRect3)
+				.transition()
+				.attr("x", x(status.years) - 20);
 
 			d3.select("#desc_03").transition().style('opacity', 1e-6);
 
-			d3.select('.graphs-box').transition().style("opacity", 1);
+			if (myTouches.x != undefined) {
+				d3.select('.graphs-box').transition().style("opacity", 1);
+			}
 		}
 	} else {
 		d3.select('.graphs-box').transition().style("opacity", 1e-6);
