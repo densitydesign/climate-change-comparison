@@ -20,7 +20,10 @@ const graphVars = {
 	red: '#ff0086',
 	blue: '#00fff8',
 	yellow: '#f9ff00',
-	lightGray: '#d8d8d8'
+	lightGray: '#d8d8d8',
+	lightRed: '#dba0ba',
+	lightBlue: '#b6e4e3',
+	lightYellow: '#e5e5ab'
 }
 
 // API Key for MapboxGL.
