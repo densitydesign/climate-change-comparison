@@ -6,6 +6,9 @@
 	--darkGrey: #454545;
 	--black: #000000;
 	--white: #ffffff;
+	--lightRed: #dba0ba;
+	--lightBlue: #b6e4e3;
+	--lightYellow: #e5e5ab;
 }
 
 
@@ -237,6 +240,24 @@ h1, h2, h3, h4 {
 	fill: none;
 	stroke: var(--black);
 	stroke-width: 1.5px;
+}
+
+.scrittaMagentaChiaro {
+	color: var(--lightRed);
+}
+
+.scrittaCyanChairo {
+	color: var(--lightBlue);
+}
+
+.scrittaYellowChiaro {
+	color: var(--lightYellow);
+}
+
+#areachart .legend {
+	/*font-size: 0.1em*/
+	font-style: italic;
+	color: var(--darkGrey);
 }
 
 /* MAP STYLES */
