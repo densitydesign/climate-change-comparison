@@ -470,23 +470,23 @@ function updateLayers(_x, _y, _showPanel) {
 	if (status.show_TX30) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-TX30-RCP85'], 0, 0, w, h);
-		d3.select('#graph_01_container').style("opacity", 1);
+		d3.select('#graph_01_container').classed("visible", true);
 	} else {
-		d3.select('#graph_01_container').style("opacity", 1e-6);
+		d3.select('#graph_01_container').classed("visible", false);
 	}
 	if (status.show_PR95PERC) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-PR95PERC-RCP85'], 0, 0, w, h);
-		d3.select('#graph_02_container').style("opacity", 1);
+		d3.select('#graph_02_container').classed("visible", true);
 	} else {
-		d3.select('#graph_02_container').style("opacity", 1e-6);
+		d3.select('#graph_02_container').classed("visible", false);
 	}
 	if (status.show_PRCPTOT) {
 		// draw the RCP85 image
 		mainCanvas.image(imagesLayers[status.years + '-PRCPTOT-RCP85'], 0, 0, w, h);
-		d3.select('#graph_03_container').style("opacity", 1);
+		d3.select('#graph_03_container').classed("visible", true);
 	} else {
-		d3.select('#graph_03_container').style("opacity", 1e-6);
+		d3.select('#graph_03_container').classed("visible", false);
 	}
 
 	//update panel
@@ -557,7 +557,7 @@ function updateLayers(_x, _y, _showPanel) {
 			//first text
 			var value1_RCP85 = Math.round(+TX30_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			var value1_RCP45 = Math.round(+TX30_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
-			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) + '.').transition().style('opacity', 1);
+			d3.select("#desc_01").html('Nel trentennio ' + status.years + ', ci saranno circa <span class="scrittaMagenta">' + Math.abs(value1_RCP85) + ' giorni di caldo intenso in ' + (value1_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i giorni in ' + (value1_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value1_RCP45) + '.').classed('visible', true);
 
 			//second graph
 			var PR95PERC_data = d3.nest()
@@ -600,7 +600,7 @@ function updateLayers(_x, _y, _showPanel) {
 			//second text
 			var value2_RCP85 = Math.round(+PR95PERC_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			var value2_RCP45 = Math.round(+PR95PERC_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
-			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').transition().style('opacity', 1);
+			d3.select("#desc_02").html('Nel trentennio ' + status.years + ', nei giorni di pioggia intensa cadranno circa <span class="scrittaCyan">' + Math.abs(value2_RCP85) + ' mm di pioggia in ' + (value2_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di politiche climatiche, i mm in ' + (value2_RCP45 > 0 ? 'più' : 'meno') + ' rispetto ad oggi saranno circa ' + Math.abs(value2_RCP45) + '.').classed('visible', true);
 
 			//third graph
 			var PRCPTOT_data = d3.nest()
@@ -644,12 +644,12 @@ function updateLayers(_x, _y, _showPanel) {
 			//third text
 			var value3_RCP85 = Math.round(+PRCPTOT_data[0].values.filter(function(d) { return d.anno == status.years })[0].valore);
 			var value3_RCP45 = Math.round(+PRCPTOT_data[1].values.filter(function(d) { return d.anno == status.years })[0].valore);
-			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').transition().style('opacity', 1);
+			d3.select("#desc_03").html('Nel trentennio ' + status.years + ', nei mesi estivi scenderanno circa <span class="scrittaYellow">' + Math.abs(value3_RCP85) + ' mm di acqua in ' + (value3_RCP85 > 0 ? 'più' : 'meno') + '</span> rispetto ad oggi. Con l’adozione di misure di mitigazione dei cambiamenti climatici, la variazione sarà di circa ' + Math.abs(value3_RCP45) + ' mm in ' + (value3_RCP45 > 0 ? 'più' : 'meno') + '.').classed('visible', true);
 
-			d3.select('.graphs-box').transition().style("opacity", 1);
+			d3.select('.graphs-box').classed('visible', true);
 		} else if (newprov == null) {
 			selectedProvince = '';
-			d3.selectAll('.graph-rect').remove();
+
 			d3.select('#nomeprovincia').html('Seleziona una provincia');
 
 			//first graph
@@ -685,7 +685,7 @@ function updateLayers(_x, _y, _showPanel) {
 				.transition()
 				.attr("x", x(status.years) - 20);
 
-			d3.select("#desc_01").transition().style('opacity', 1e-6);
+			d3.select("#desc_01").classed('visible', false);
 
 			//second graph
 			var paths2 = paths_g2.selectAll("path")
@@ -720,7 +720,7 @@ function updateLayers(_x, _y, _showPanel) {
 				.transition()
 				.attr("x", x(status.years) - 20);
 
-			d3.select("#desc_02").transition().style('opacity', 1e-6);
+			d3.select("#desc_02").classed('visible', false);
 
 			//third graph
 			var paths3 = paths_g3.selectAll("path")
@@ -756,14 +756,14 @@ function updateLayers(_x, _y, _showPanel) {
 				.transition()
 				.attr("x", x(status.years) - 20);
 
-			d3.select("#desc_03").transition().style('opacity', 1e-6);
+			d3.select("#desc_03").classed('visible', false);
 
 			if (myTouches.x != undefined) {
-				d3.select('.graphs-box').transition().style("opacity", 1);
+				d3.select('.graphs-box').classed('visible', true);
 			}
 		}
 	} else {
-		d3.select('.graphs-box').transition().style("opacity", 1e-6);
+		d3.select('.graphs-box').classed('visible', false);
 
 		holeMaskCircles.transition()
 			.duration(350)
