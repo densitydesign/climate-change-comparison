@@ -124,57 +124,44 @@ var overlayCircles = svg_overlay.selectAll('.overlay-circles');
 
 d3.select('#map').on('touchstart', function(d) {
 		d3.event.preventDefault();
-		myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
-		myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
-		myTouches.identifier = d3.event.touches[0].identifier;
 		if (status.show_TX30 || status.show_PR95PERC || status.show_PRCPTOT) {
-			d3.select('.no-selection-text')
-				.transition()
-				.style('opacity', 1e-6)
-				.remove();
+			myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
+			myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
+			myTouches.identifier = d3.event.touches[0].identifier;
+			d3.select('.no-selection-container')
+				.classed('visible', false);
 			onStart();
 		} else {
-			var noSelection = d3.select('#map')
-				.selectAll('.no-selection-text')
-				.data([1]);
-
-			noSelection.enter()
-				.append('h2')
-				.classed('no-selection-text', true)
-				.style('opacity', 1e-6)
-				.text('Seleziona un livello')
-				.merge(noSelection)
-				.style('top', myTouches.y - 60 + 'px')
-				.style('left', myTouches.x - 90 + 'px');
+			var noSelection = d3.select('.no-selection-container')
+				.classed('visible', true);
 
 			noSelection.transition()
-				.style('opacity', 1)
+				.duration(350)
 				.on('end', function(t) {
-					// d3.timer(function(){
-					// 	d3.selectAll('.no-selection-text')
-					// 	.transition()
-					// 	.style('opacity', 1e-6)
-					// 	.remove();
-					// }, 250)
-					d3.selectAll('.no-selection-text')
-						.transition()
-						.style('opacity', 1e-6)
-						.remove();
+					d3.select('.no-selection-container')
+						.classed('visible', false);
 				});
 		}
 	})
 	.on('touchmove', function(d) {
 		d3.event.preventDefault();
-		myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
-		myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
-		myTouches.identifier = d3.event.touches[0].identifier;
 		if (status.show_TX30 || status.show_PR95PERC || status.show_PRCPTOT) {
+			myTouches.x = d3.event.touches[0].clientX - d3.event.touches[0].target.getBoundingClientRect().x;
+			myTouches.y = d3.event.touches[0].clientY - d3.event.touches[0].target.getBoundingClientRect().y;
+			myTouches.identifier = d3.event.touches[0].identifier;
+			d3.select('.no-selection-container')
+				.classed('visible', false);
 			onMove();
 		} else {
+			var noSelection = d3.select('.no-selection-container')
+				.classed('visible', true);
 
-			d3.select('.no-selection-text')
-				.style('top', myTouches.y - 60 + 'px')
-				.style('left', myTouches.x - 90 + 'px');
+			noSelection.transition()
+				.duration(350)
+				.on('end', function(t) {
+					d3.select('.no-selection-container')
+						.classed('visible', false);
+				});
 		}
 	})
 	.on('touchend', function(d) {
